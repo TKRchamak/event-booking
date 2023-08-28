@@ -7,9 +7,9 @@ export interface IOrganizer {
     organization_title: string;
     organization_logo: string;
     organization_poster: string;
-    event_list?: string[]; // event id
-    start_at: Date;
+    // start_at: Date;
     description: string;
+    // country: string; // city id
+    event_list?: string[]; // event id
     followers?: string[]; // user id
-    city: string;
 }

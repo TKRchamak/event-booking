@@ -1,13 +1,14 @@
 import { NextFunction, Response, Request } from "express";
-import { createOrganizerToDB, getOrganizerFromDB, removeOrganizerFromDB, updateOrganizerFromDB } from "./organizer.service";
+import { addCityToDB, getCityFromDB, removeCityFromDB, updateCityFromDB } from "./city.service";
 
-// add Organizer
-export const addOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+
+// add city
+export const addCity = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const Organizer = await createOrganizerToDB(req.body);
+        const city = await addCityToDB(req.body);
         res.status(200).json({
             status: "success",
-            data: Organizer
+            data: city
         })
 
     } catch (error) {
@@ -19,21 +20,21 @@ export const addOrganizer = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-//get Organizer by id or Organizer list
-export const getOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+//get city by id or city list
+export const getCity = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const Organizer = await getOrganizerFromDB(id);
+            const city = await getCityFromDB(id);
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: city
             })
         } else {
-            const Organizer = await getOrganizerFromDB();
+            const city = await getCityFromDB();
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: city
             })
         }
 
@@ -47,18 +48,18 @@ export const getOrganizer = async (req: Request, res: Response, next: NextFuncti
 }
 
 
-//edit Organizer by Organizer or Organizer list
-export const updateOrganizerData = async (req: Request, res: Response, next: NextFunction) => {
+//edit city by city or city list
+export const updateCityData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const isUpdated = await updateOrganizerFromDB(id, req.body);
+            const isUpdated = await updateCityFromDB(id, req.body);
             res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
         } else {
-            throw new Error("Organizer not found for this id")
+            throw new Error("City not found for this id")
         }
 
     } catch (error) {
@@ -70,18 +71,18 @@ export const updateOrganizerData = async (req: Request, res: Response, next: Nex
     }
 }
 
-//remove Organizer by Organizer or Organizer list
-export const removeOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+//remove city by city or city list
+export const removeCity = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const Organizer = await removeOrganizerFromDB(id);
+            const city = await removeCityFromDB(id);
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: city
             })
         } else {
-            throw new Error("Organizer not found for this id")
+            throw new Error("City not found for this id")
         }
 
     } catch (error) {

@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import app from "./app";
 import configData from "./config";
 
-// database connection
 async function databaseConnection() {
     try {
+        // database connection
         await mongoose.connect(`mongodb://127.0.0.1:27017/${configData.dbName}`);
         console.log("database connect successfully");
         app.listen(configData.PORT, () => {

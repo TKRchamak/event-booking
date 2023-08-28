@@ -1,10 +1,8 @@
 export interface IUser {
     id: string;
     username: string;
-    name: {
-        firstName: string;
-        lastName: string;
-    };
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     role: "user" | "admin";
@@ -12,10 +10,10 @@ export interface IUser {
     contactNo?: string;
     address?: string;
     selected_city?: string;
-    interest_list?: number[]; // event type id
+    interest_list?: string[]; // event type id
     watch_list?: string[]; // event id
     favorite_list?: string[]; // organizer id
-    ticket_list?: string[]; // ticket id
+    ticket_list?: any[]; // ticket id
 }
 
 

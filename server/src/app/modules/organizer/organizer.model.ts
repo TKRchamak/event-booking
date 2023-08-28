@@ -12,11 +12,11 @@ const organizerSchema = new Schema<IOrganizer>({
     organization_title: { type: String, required: true, unique: true },
     organization_logo: { type: String, required: true, unique: false },
     organization_poster: { type: String, required: true, unique: false },
+    // start_at: { type: Date, required: true, unique: false },
+    // country: { type: String, required: true, unique: false },
     event_list: { type: Array, required: false, unique: false },
-    start_at: { type: Date, required: true, unique: false },
     description: { type: String, required: true, unique: false },
-    followers: { type: Array, required: true, unique: false },
-    city: { type: String, required: true, unique: false },
+    followers: { type: Array, required: false, unique: false },
 });
 
 

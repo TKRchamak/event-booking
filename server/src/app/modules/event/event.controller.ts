@@ -1,13 +1,13 @@
-import { NextFunction, Response, Request } from "express";
-import { createOrganizerToDB, getOrganizerFromDB, removeOrganizerFromDB, updateOrganizerFromDB } from "./organizer.service";
+import { Request, Response, NextFunction } from "express";
+import { addEventToDB, getEventFromDB, removeEventFromDB, updateEventFromDB } from "./event.service";
 
-// add Organizer
-export const addOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+// add event_type
+export const addEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const Organizer = await createOrganizerToDB(req.body);
+        const event_type = await addEventToDB(req.body);
         res.status(200).json({
             status: "success",
-            data: Organizer
+            data: event_type
         })
 
     } catch (error) {
@@ -19,21 +19,21 @@ export const addOrganizer = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-//get Organizer by id or Organizer list
-export const getOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+//get event_type by id or event_type list
+export const getEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const Organizer = await getOrganizerFromDB(id);
+            const event_type = await getEventFromDB(id);
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: event_type
             })
         } else {
-            const Organizer = await getOrganizerFromDB();
+            const event_type = await getEventFromDB();
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: event_type
             })
         }
 
@@ -47,18 +47,18 @@ export const getOrganizer = async (req: Request, res: Response, next: NextFuncti
 }
 
 
-//edit Organizer by Organizer or Organizer list
-export const updateOrganizerData = async (req: Request, res: Response, next: NextFunction) => {
+//edit event_type by event_type or event_type list
+export const updateEventData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const isUpdated = await updateOrganizerFromDB(id, req.body);
+            const isUpdated = await updateEventFromDB(id, req.body);
             res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
         } else {
-            throw new Error("Organizer not found for this id")
+            throw new Error("This Event_type not found for this id")
         }
 
     } catch (error) {
@@ -70,18 +70,18 @@ export const updateOrganizerData = async (req: Request, res: Response, next: Nex
     }
 }
 
-//remove Organizer by Organizer or Organizer list
-export const removeOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+//remove event by id or event list
+export const removeEvent = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         if (id) {
-            const Organizer = await removeOrganizerFromDB(id);
+            const eventType = await removeEventFromDB(id);
             res.status(200).json({
                 status: "success",
-                data: Organizer
+                data: eventType
             })
         } else {
-            throw new Error("Organizer not found for this id")
+            throw new Error("EventType not found for this id")
         }
 
     } catch (error) {

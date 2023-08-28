@@ -1,7 +1,8 @@
 interface ITicketType {
     id: string;
     description: string;
-    price: number;
+    price: string;
+    discount: string;
 }
 
 
