@@ -1,5 +1,5 @@
 export interface ITicket {
-    id: string;
+    _id: string;
     description: string;
     discount: string;
     price: string;
@@ -7,4 +7,5 @@ export interface ITicket {
     event_id: string;
     ticket_date: string;
     time_slot: string;
+    // status: "active" | "done";
 }

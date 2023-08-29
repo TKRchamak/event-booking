@@ -1,42 +1,101 @@
+import { checkPassword, encryptPassword } from './../../utils/password';
 import { NextFunction, Response, Request } from "express";
-import { createOrganizerToDB, getOrganizerFromDB, removeOrganizerFromDB, updateOrganizerFromDB } from "./organizer.service";
+import { createOrganizerToDB, getOrganizerByEmailFromDB, getOrganizerFromDB, removeOrganizerFromDB, updateOrganizerFromDB, updateOrganizerStateFromDB } from "./organizer.service";
+import { getAuthToken } from '../../utils/authentication';
 
 // add Organizer
-export const addOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+export const registerOrganizer = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const Organizer = await createOrganizerToDB(req.body);
+        const { email, password } = req.body;
+        const isUser = await getOrganizerByEmailFromDB(email);
+        if (isUser) {
+            res.status(302).json({
+                status: "success",
+                data: "Email Already Exist"
+            })
+        }
+
+        let encPassword = await encryptPassword(password);
+        req.body.password = encPassword;
+        req.body["status"] = "pending";
+        const organizerData = await createOrganizerToDB(req.body);
+        const token = getAuthToken(organizerData._id, organizerData.role);
+
+        res.status(200).json({
+            status: "success",
+            token: token,
+            data: organizerData
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "error",
+            error
+        })
+    }
+}
+
+export const loginOrganizer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, password } = req.body;
+        const organizerData = await getOrganizerByEmailFromDB(email);
+        let isVerified = await checkPassword(password, organizerData.password);
+
+        if (!isVerified) {
+            res.status(500).json({
+                status: "error",
+                error: "Authentication Error"
+            })
+        }
+        const token = getAuthToken(organizerData._id, organizerData.role)
+        res.status(200).json({
+            status: "success",
+            token: token,
+            data: organizerData
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "error",
+            error
+        })
+    }
+}
+
+export const getAllOrganizer = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        if (role !== "admin") {
+            res.status(500).json({
+                status: "error",
+                error: "You are not admin"
+            })
+        }
+
+        const allOrganizer = await getOrganizerFromDB();
+        res.status(200).json({
+            status: "success",
+            data: allOrganizer
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "error",
+            error
+        })
+    }
+}
+
+//get Organizer by token
+export const getOrganizerByIdToken = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        const Organizer = await getOrganizerFromDB(userId);
         res.status(200).json({
             status: "success",
             data: Organizer
         })
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            status: "error",
-            error
-        })
-    }
-}
-
-//get Organizer by id or Organizer list
-export const getOrganizer = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
-        if (id) {
-            const Organizer = await getOrganizerFromDB(id);
-            res.status(200).json({
-                status: "success",
-                data: Organizer
-            })
-        } else {
-            const Organizer = await getOrganizerFromDB();
-            res.status(200).json({
-                status: "success",
-                data: Organizer
-            })
-        }
-
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -47,12 +106,11 @@ export const getOrganizer = async (req: Request, res: Response, next: NextFuncti
 }
 
 
-//edit Organizer by Organizer or Organizer list
-export const updateOrganizerData = async (req: Request, res: Response, next: NextFunction) => {
+export const updateOrganizerState = async (req: Request | any, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
-        if (id) {
-            const isUpdated = await updateOrganizerFromDB(id, req.body);
+        const { userId, role } = req.authUser;
+        if (role === "admin") {
+            const isUpdated = await updateOrganizerStateFromDB(req.body._id, req.body.status);
             res.status(200).json({
                 status: "success",
                 data: isUpdated
@@ -60,6 +118,38 @@ export const updateOrganizerData = async (req: Request, res: Response, next: Nex
         } else {
             throw new Error("Organizer not found for this id")
         }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            status: "error",
+            error
+        })
+    }
+}
+
+//edit Organizer by Organizer or Organizer list
+export const updateOrganizerData = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        console.log(userId, req.body);
+        if (userId && role === "organizer") {
+            const isUpdated = await updateOrganizerFromDB(userId, req.body);
+            res.status(200).json({
+                status: "success",
+                data: isUpdated
+            })
+        } else {
+            res.status(500).json({
+                status: "error",
+                error: "Organizer not found for this id"
+            })
+        }
+
+        // res.status(500).json({
+        //     status: "error",
+        //     error: "Organizer not found for this id"
+        // })
 
     } catch (error) {
         console.log(error);

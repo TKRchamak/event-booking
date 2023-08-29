@@ -1,5 +1,6 @@
 import express from "express";
-import { addOrganizer, getOrganizer, removeOrganizer, updateOrganizerData } from "./organizer.controller";
+import { registerOrganizer, removeOrganizer, updateOrganizerData, loginOrganizer, getAllOrganizer, getOrganizerByIdToken, updateOrganizerState } from "./organizer.controller";
+import authentication from "../../middlewares/authentication.middleware";
 const router = express.Router();
 
 /*
@@ -9,10 +10,12 @@ const router = express.Router();
     update organizer data;
 */
 
-router.post("/", addOrganizer);
-router.get("/", getOrganizer);
-router.get("/:id", getOrganizer);
-router.put("/:id", updateOrganizerData);
-// router.delete("/:id", removeOrganizer);
+router.post("/register", registerOrganizer);
+router.post("/login", loginOrganizer);
+router.get("/detail", authentication, getOrganizerByIdToken); //role organizer
+router.put("/update", authentication, updateOrganizerData); //role organizer
+
+router.get("/all", authentication, getAllOrganizer); // role admin
+router.post("/admin-approval", authentication, updateOrganizerState); // role admin
 
 export default router;

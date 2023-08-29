@@ -1,13 +1,13 @@
 import express from "express";
-// import { createUser, getAdminUsers, getUserById, getUsers } from "./user.controller";
-import { buyTicket, createUser, getUserById, getUsers } from "./user.controller";
+import { registerUser, getUserByToken, loginUser, updateUserByToken } from "./user.controller";
 import authentication from "../../middlewares/authentication.middleware";
 const router = express.Router();
 
-router.get("/", getUsers);
-router.get("/:id", getUserById);
-router.post("/create-user", createUser);
-router.put("/:id", getUserById);
-router.post("/buy-ticket/:id", buyTicket);
+router.post("/register-user", registerUser);
+router.post("/login", loginUser);
+router.get("/detail", authentication, getUserByToken);
+router.put("/update", authentication, updateUserByToken);
+// router.post("/buy-ticket", authentication, buyTicket);
+// router.get("/", getUsers);
 
 export default router;

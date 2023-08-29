@@ -1,20 +1,33 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
+import { addEventInOrganizerDB } from '../organizer/organizer.service';
 import { IEvent } from './event.interface';
 import Event from './event.model';
 
 // add event in db
 export const addEventToDB = async (eventData: IEvent): Promise<IEvent> => {
     try {
-        let id = uuidv4();
-        // console.log({ ...event_typeData, ...{ id: id } });
-        const event = new Event({ ...eventData, ...{ id: id } });
+        console.log(eventData);
+        const event = new Event(eventData);
         await event.save();
+        await addEventInOrganizerDB(event.organizer, event._id);
         return event;
     } catch (err) {
         throw err;
     }
 }
 
+export const addReviewToEventToDB = async (eventId: string, reviewData: IEvent): Promise<string> => {
+    try {
+        const event = await Event.updateOne({ _id: eventId }, { $push: { reviews: reviewData } }, { upsert: true })
+        if (event.acknowledged) {
+            return "Review Added successfully";
+        } else {
+            throw new Error("Not Update at this time");
+        }
+    } catch (err) {
+        throw err;
+    }
+}
 
 // all event or event by id
 export const getEventFromDB = async (eventId: string = '000'): Promise<any> => {
@@ -26,6 +39,16 @@ export const getEventFromDB = async (eventId: string = '000'): Promise<any> => {
             const event = await Event.findOne({ _id: eventId });
             return event;
         }
+    } catch (err) {
+        throw err;
+    }
+}
+
+//organizer event List
+export const getEventListByIdList = async (userId: string): Promise<IEvent[]> => {
+    try {
+        const eventList = await Event.find({ organizer: userId });
+        return eventList;
     } catch (err) {
         throw err;
     }

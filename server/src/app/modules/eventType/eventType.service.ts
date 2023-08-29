@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { IEvent_type } from './eventType.interface';
 import Event_type from './eventType.model';
 
-// add event_type in db
+
 export const addEvent_typeToDB = async (event_typeData: IEvent_type): Promise<IEvent_type> => {
     try {
         let id = uuidv4();
@@ -16,7 +16,7 @@ export const addEvent_typeToDB = async (event_typeData: IEvent_type): Promise<IE
 }
 
 
-// all event_type or event_type by id
+
 export const getEvent_typeFromDB = async (event_typeId: string = '000'): Promise<any> => {
     try {
         if (event_typeId === "000") {
@@ -31,7 +31,7 @@ export const getEvent_typeFromDB = async (event_typeId: string = '000'): Promise
     }
 }
 
-// edit event_type data by id
+
 export const updateEvent_typeFromDB = async (event_typeId: string, event_typeData: IEvent_type): Promise<string> => {
     try {
         if (!event_typeId) {
@@ -49,7 +49,7 @@ export const updateEvent_typeFromDB = async (event_typeId: string, event_typeDat
     }
 }
 
-// remove city data by id
+
 export const removeEvent_typeFromDB = async (cityId: string): Promise<string> => {
     try {
         if (!cityId) {

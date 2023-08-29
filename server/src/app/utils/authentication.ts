@@ -4,7 +4,7 @@ import configData from "../../config";
 
 const { JWT_KEY } = configData;
 
-export function getAuthToken(userId: string, role: string, expiresIn = '24h') {
+export function getAuthToken(userId: string, role: string, expiresIn = '7d') {
     return jwt.sign({ userId, role }, JWT_KEY, {
         expiresIn,
     });
