@@ -1,10 +1,28 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '../../utils/Colors';
 
-const CustomBtn = ({ height, text, textColor = "#fff", color1 = Colors.themeColorHigh, color2 = Colors.themeColorLow, iconName, func, radius = 40, marginBottom = 0 }) => {
+const CustomBtn = ({ height, width, text, textColor = "#fff", color1 = Colors.themeColorHigh, color2 = Colors.themeColorLow, iconName, func, radius = 40, marginBottom = 0, disabled = false }) => {
+    if (disabled) {
+        return (
+            <View style={[{
+                height: height,
+                width: width,
+                padding: 5,
+                paddingHorizontal: 10,
+                borderWidth: 0,
+                borderRadius: radius,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: marginBottom,
+                backgroundColor: Colors.gray
+            }]}>
+                <Text style={{ color: textColor, fontWeight: "bold" }}>{text}</Text>
+            </View>
+        )
+    }
     return (
         <TouchableOpacity onPress={func} >
             <LinearGradient
@@ -13,7 +31,7 @@ const CustomBtn = ({ height, text, textColor = "#fff", color1 = Colors.themeColo
                 end={{ x: 1, y: 1 }}
                 locations={[0.10, 0.89]}
                 colors={[color1, color2]}
-                style={{
+                style={[{
                     height: height,
                     padding: 5,
                     paddingHorizontal: 10,
@@ -24,7 +42,12 @@ const CustomBtn = ({ height, text, textColor = "#fff", color1 = Colors.themeColo
                     justifyContent: "center",
                     alignItems: "center",
                     marginBottom: marginBottom
-                }}>
+                }
+                    ,
+                disabled && {
+                    backgroundColor: 'gray',
+                }
+                ]}>
                 {
                     text &&
                     <Text style={{ color: textColor, fontWeight: "bold" }}>{text}</Text>

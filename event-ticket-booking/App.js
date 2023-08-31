@@ -5,6 +5,9 @@ import RootNavigator from "./src/RootNavigator/RootNavigator";
 import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { Provider } from "react-redux";
+import store from "./src/Redux";
+import { PaperProvider } from 'react-native-paper';
 
 export default function App() {
   const statusBarHeight = StatusBar.currentHeight;
@@ -28,11 +31,15 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onLayout={onLayoutRootView}>
-      <SafeAreaView style={[styles.container, { marginTop: statusBarHeight }]}>
-        <RootNavigator />
-      </SafeAreaView>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PaperProvider>
+        <NavigationContainer onLayout={onLayoutRootView}>
+          <SafeAreaView style={[styles.container, { marginTop: statusBarHeight }]}>
+            <RootNavigator />
+          </SafeAreaView>
+        </NavigationContainer>
+      </PaperProvider>
+    </Provider>
   );
 }
 

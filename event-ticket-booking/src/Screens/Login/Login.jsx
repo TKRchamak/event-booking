@@ -8,7 +8,8 @@ import {
   Alert,
   ScrollView,
   Pressable,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
 } from "react-native";
 // import { useDispatch } from 'react-redux';
 // import { setLoaderModalTrue, setLoaderModalFalse, setUserData } from '../../Redux/actions/userActions';
@@ -19,24 +20,20 @@ import Colors from "../../utils/Colors";
 import CustomBtn from "../../Components/CustomBtn/CustomBtn";
 import FontUtils from "../../utils/FontUtils";
 // import { url } from '../../Redux/store';
-import Checkbox from 'expo-checkbox';
+import Checkbox from "expo-checkbox";
 import HeaderBar from "../../Components/HeaderBar/HeaderBar";
+import { loginRequest, setUserData } from "../../Redux/userSlice";
+import { useDispatch } from "react-redux";
+import rootUrl from "../../Services/rootUrl";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login(props) {
   const { navigation } = props;
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [inputLoginUser, setInputLoginUser] = useState({});
   const [isChecked, setChecked] = useState(false);
-  // useEffect(() => {
-  //     const checkUser = async () => {
-  //         const data = await AsyncStorage.getItem("rcl_user_data");
-  //         const userData = JSON.parse(data);
-  //         if (userData) {
-  //             dispatch(setUserData(userData));
-  //         }
-  //     }
-  //     checkUser();
-  // }, [])
+  const [loginLoading, setLoginLoading] = useState(false);
 
   const handleInputChange = (text, label) => {
     const newData = { ...inputLoginUser };
@@ -44,37 +41,53 @@ export default function Login(props) {
     setInputLoginUser(newData);
   };
 
-  // const loginFunc = () => {
-  //     dispatch(setLoaderModalTrue());
-  //     fetch(`${url}/user/login/`, {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify(inputLoginUser)
-  //     })
-  //         .then(res => res.json())
-  //         .then(async data => {
-  //             if (data.error) {
-  //                 Alert.alert(`${data.error}`);
-  //             } else {
-  //                 // await AsyncStorage.setItem("rcl_user_data", JSON.stringify(data));
-  //                 dispatch(setUserData(data));
-  //             }
-  //         })
-  //         .catch(err => {
-  //             // console.log(err);
-  //             Alert.alert("Please Login Again");
-  //         })
-  //         .finally(() => dispatch(setLoaderModalFalse()))
-  // }
+  const loginFunc = async () => {
+    try {
+      setLoginLoading(true);
+      if (isChecked) {
+        const { data } = await axios.post(
+          `${rootUrl}/api/v1/organizer/login`,
+          inputLoginUser
+        );
+        if (data.token) {
+          // console.log(data);
+          AsyncStorage.setItem("userData", JSON.stringify(data))
+          dispatch(setUserData(data));
+        } else {
+          throw data;
+        }
+      } else {
+        const { data } = await axios.post(
+          `${rootUrl}/api/v1/user/login`,
+          inputLoginUser
+        );
+        if (data.token) {
+          // console.log(data);
+          AsyncStorage.setItem("userData", JSON.stringify(data))
+          dispatch(setUserData(data));
+        } else {
+          throw data;
+        }
+      }
 
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoginLoading(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <HeaderBar navigation={navigation} name={"Login"} func={() => { navigation.goBack() }} />
+      <HeaderBar
+        navigation={navigation}
+        name={"Login"}
+        func={() => {
+          navigation.goBack();
+        }}
+      />
       <ScrollView style={{ flex: 1, backgroundColor: Colors.light }}>
         <View style={styles.loginContainer}>
-          {/* <Image style={styles.tinyLogo} source={logo} /> */}
-          {/* <Text style={styles.brandName}>FEVER</Text> */}
           <Text style={styles.myLogo}>EVENT</Text>
           <View style={styles.inputView}>
             <TextInput
@@ -91,33 +104,55 @@ export default function Login(props) {
               placeholderTextColor={Colors.gray}
             />
 
-            <Pressable style={{ flex: 1, flexDirection: "row", marginBottom: 16, marginLeft: 10, alignItems: "center" }} onPress={() => setChecked(!isChecked)}>
+            <Pressable
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                marginBottom: 16,
+                marginLeft: 10,
+                alignItems: "center",
+              }}
+              onPress={() => setChecked(!isChecked)}
+            >
               <Checkbox
                 style={styles.checkbox}
                 value={isChecked}
                 onValueChange={setChecked}
                 color={isChecked ? Colors.themeColorHigh : undefined}
               />
-              <Text style={{ marginLeft: 10, fontSize: 18, color: Colors.gray }}>Login As an Organizer</Text>
+              <Text
+                style={{ marginLeft: 10, fontSize: 18, color: Colors.gray }}
+              >
+                Login As an Organizer
+              </Text>
             </Pressable>
 
             <CustomBtn
               height={60}
               marginBottom={10}
               textColor={Colors.light}
-              text={"Sign-In"}
-            // func={() => loginFunc()}
+              text={loginLoading ? <ActivityIndicator animating={true} color={Colors.themeColorHigh} /> : "Sign-In"}
+              func={loginFunc}
             />
             {/* height, text, color, iconName, func, textColor */}
 
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-              <Text style={{ marginLeft: 10, fontSize: 18, color: Colors.gray }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: 10
+              }}
+            >
+              <Text
+                style={{ marginLeft: 10, fontSize: 18, color: Colors.gray }}
+              >
                 Don’t have an account?
-                <Text style={{ color: Colors.themeColorHigh, marginLeft: 30 }}>Register</Text>
+                <Text style={{ color: Colors.themeColorHigh, marginLeft: 30 }} onPress={() => navigation.replace("registration")}>
+                  Register
+                </Text>
               </Text>
             </View>
-
-
           </View>
         </View>
       </ScrollView>
@@ -127,9 +162,9 @@ export default function Login(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ECEBE8',
-    width: '100%',
-    height: '100%',
+    backgroundColor: "#ECEBE8",
+    width: "100%",
+    height: "100%",
   },
   loginContainer: {
     backgroundColor: Colors.light,
@@ -140,8 +175,7 @@ const styles = StyleSheet.create({
   },
 
   myLogo: {
-    marginTop: 160,
-    marginBottom: 100,
+    marginVertical: 100,
     color: Colors.themeColorHigh,
     // fontWeight: FontUtils.cfw.bigger,
     fontSize: FontUtils.cfs.logoSize,
@@ -190,5 +224,5 @@ const styles = StyleSheet.create({
 
     fontSize: 18,
     // lineHeight: 30,
-  }
+  },
 });

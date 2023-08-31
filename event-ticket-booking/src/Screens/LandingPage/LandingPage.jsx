@@ -6,6 +6,7 @@ import landingImg from "../../../assets/img/landingPageImg.png";
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '../../utils/Colors';
 import CustomBtn from '../../Components/CustomBtn/CustomBtn';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LandingPage = (props) => {
     const { navigation } = props;
@@ -79,15 +80,6 @@ const LandingPage = (props) => {
                         func={() => navigation.navigate('registration')}
                     />
                 </LinearGradient>
-
-                {/* <View style={{
-                    flex: 1,
-                    width: '100%',
-                    height: 100,
-                    positionBottom: 0,
-                    position: 'absolute',
-                }}>
-                </View> */}
             </ImageBackground>
         </SafeAreaView>
 
