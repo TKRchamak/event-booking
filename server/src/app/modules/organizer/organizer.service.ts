@@ -64,11 +64,16 @@ export const updateOrganizerFromDB = async (organizerId: string, organizerData: 
     }
 }
 
+// update organization status by admin
 export const updateOrganizerStateFromDB = async (organizerId: string, status: string): Promise<string> => {
     try {
         if (!organizerId) {
             throw new Error("Organizer Not Found");
         } else {
+            let checkOrganizer = await Organizer.findOne({ _id: organizerId });
+            if (!checkOrganizer) {
+                throw new Error("No Organization Found");
+            }
             const organizer = await Organizer.updateOne({ _id: organizerId }, { $set: { status: status } }, { upsert: true })
             if (organizer.acknowledged) {
                 return "Data Update successfully";

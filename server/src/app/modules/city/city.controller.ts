@@ -6,14 +6,14 @@ import { addCityToDB, getCityFromDB, removeCityFromDB, updateCityFromDB } from "
 export const addCity = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const city = await addCityToDB(req.body);
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             data: city
         })
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -26,13 +26,13 @@ export const getCity = async (req: Request, res: Response, next: NextFunction) =
         const { id } = req.params;
         if (id) {
             const city = await getCityFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: city
             })
         } else {
             const city = await getCityFromDB();
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: city
             })
@@ -40,7 +40,7 @@ export const getCity = async (req: Request, res: Response, next: NextFunction) =
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -54,7 +54,7 @@ export const updateCityData = async (req: Request, res: Response, next: NextFunc
         const { id } = req.params;
         if (id) {
             const isUpdated = await updateCityFromDB(id, req.body);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
@@ -64,7 +64,7 @@ export const updateCityData = async (req: Request, res: Response, next: NextFunc
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -77,7 +77,7 @@ export const removeCity = async (req: Request, res: Response, next: NextFunction
         const { id } = req.params;
         if (id) {
             const city = await removeCityFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: city
             })
@@ -87,7 +87,7 @@ export const removeCity = async (req: Request, res: Response, next: NextFunction
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })

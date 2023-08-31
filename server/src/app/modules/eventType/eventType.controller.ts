@@ -5,14 +5,14 @@ import { addEvent_typeToDB, getEvent_typeFromDB, removeEvent_typeFromDB, updateE
 export const addEvent_type = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const event_type = await addEvent_typeToDB(req.body);
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             data: event_type
         })
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -25,13 +25,13 @@ export const getEvent_type = async (req: Request, res: Response, next: NextFunct
         const { id } = req.params;
         if (id) {
             const event_type = await getEvent_typeFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: event_type
             })
         } else {
             const event_type = await getEvent_typeFromDB();
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: event_type
             })
@@ -39,7 +39,7 @@ export const getEvent_type = async (req: Request, res: Response, next: NextFunct
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -53,7 +53,7 @@ export const updateEventTypeData = async (req: Request, res: Response, next: Nex
         const { id } = req.params;
         if (id) {
             const isUpdated = await updateEvent_typeFromDB(id, req.body);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
@@ -63,7 +63,7 @@ export const updateEventTypeData = async (req: Request, res: Response, next: Nex
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -76,7 +76,7 @@ export const removeEventType = async (req: Request, res: Response, next: NextFun
         const { id } = req.params;
         if (id) {
             const eventType = await removeEvent_typeFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: eventType
             })
@@ -86,7 +86,7 @@ export const removeEventType = async (req: Request, res: Response, next: NextFun
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })

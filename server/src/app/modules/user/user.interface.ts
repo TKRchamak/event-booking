@@ -1,14 +1,14 @@
 export interface IUser {
     _id: string;
     username: string;
-    firstName: string;
-    lastName: string;
+    name: string;
+    // lastName: string;
     email: string;
     password: string;
     role: "user" | "admin";
-    gender: "male" | "female";
-    contactNo?: string;
-    address?: string;
+    // gender: "male" | "female";
+    // contactNo?: string;
+    // address?: string;
     selected_city?: string;
     profile_pic_url?: string;
     interest_list?: string[]; // event type id

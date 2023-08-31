@@ -7,26 +7,26 @@ export const addEvent = async (req: Request | any, res: Response, next: NextFunc
         console.log("=============its working=================");
         const { userId, role } = req.authUser
         if (role !== "organizer") {
-            res.status(401).json({
+            return res.status(401).json({
                 status: "error",
                 error: "You are not organizer"
             })
         }
         if (userId !== req.body.organizer) {
-            res.status(401).json({
+            return res.status(401).json({
                 status: "error",
                 error: "Something wrong"
             })
         }
         const event_type = await addEventToDB(req.body);
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             data: event_type
         })
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -39,7 +39,7 @@ export const addReviewForEventData = async (req: Request | any, res: Response, n
         const { id } = req.params;
         if (id) {
             const isUpdated = await addReviewToEventToDB(id, req.body);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
@@ -49,7 +49,7 @@ export const addReviewForEventData = async (req: Request | any, res: Response, n
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -62,13 +62,13 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction) 
         const { id } = req.params;
         if (id) {
             const event_type = await getEventFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: event_type
             })
         } else {
             const event_type = await getEventFromDB();
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: event_type
             })
@@ -76,7 +76,7 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction) 
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -89,14 +89,14 @@ export const getOrganizerEventList = async (req: Request | any, res: Response, n
         const { userId, role } = req.authUser;
         console.log(role, userId);
         const eventList = await getEventListByIdList(userId);
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             data: eventList
         })
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -108,7 +108,7 @@ export const updateEventData = async (req: Request | any, res: Response, next: N
     try {
         const { role } = req.authUser
         if (role !== "organizer") {
-            res.status(401).json({
+            return res.status(401).json({
                 status: "error",
                 error: "You are not organizer"
             })
@@ -117,7 +117,7 @@ export const updateEventData = async (req: Request | any, res: Response, next: N
         const { id } = req.params;
         if (id) {
             const isUpdated = await updateEventFromDB(id, req.body);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: isUpdated
             })
@@ -127,7 +127,7 @@ export const updateEventData = async (req: Request | any, res: Response, next: N
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -140,7 +140,7 @@ export const removeEvent = async (req: Request, res: Response, next: NextFunctio
         const { id } = req.params;
         if (id) {
             const eventType = await removeEventFromDB(id);
-            res.status(200).json({
+            return res.status(200).json({
                 status: "success",
                 data: eventType
             })
@@ -150,7 +150,7 @@ export const removeEvent = async (req: Request, res: Response, next: NextFunctio
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })

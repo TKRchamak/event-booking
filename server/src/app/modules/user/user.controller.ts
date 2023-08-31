@@ -5,11 +5,18 @@ import { getAuthToken } from "../../utils/authentication";
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { email, password } = req.body;
-        const alreadyHave = await getUserByEmailFromDB(email);
+        const { email, password, role } = req.body;
 
+        if (role) {
+            return res.status(500).json({
+                status: "error",
+                error: "Your not not authorized"
+            })
+        }
+
+        const alreadyHave = await getUserByEmailFromDB(email);
         if (alreadyHave) {
-            res.status(302).json({
+            return res.status(302).json({
                 status: "success",
                 data: "Email Already Exist"
             })
@@ -20,14 +27,14 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
         const userData = await createUserToDB(req.body);
         const token = getAuthToken(userData._id, userData.role);
 
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             token: token,
             data: userData
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -36,7 +43,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-
+        // console.log(req.body);
         const { email, password } = req.body;
         const userData = await getUserByEmailFromDB(email);
 
@@ -44,20 +51,20 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         // console.log(userData, isVerified);
 
         if (!isVerified) {
-            res.status(301).json({
+            return res.status(301).json({
                 status: "error",
                 error: "Authentication Error"
             })
         }
         const token = getAuthToken(userData._id, userData.role)
-        res.status(200).json({
+        return res.status(200).json({
             status: "success",
             token: token,
             data: userData
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "error",
             error
         })
@@ -68,18 +75,17 @@ export const getUserByToken = async (req: Request | any, res: Response, next: Ne
     // const { id } = req.params;
     const { userId, role } = req.authUser;
     const user = await getUserByIdFromDB(userId);
-    res.status(200).json({
+    return res.status(200).json({
         status: 'success',
         data: user
     })
 }
 
 export const updateUserByToken = async (req: Request | any, res: Response, next: NextFunction) => {
-    // const { id } = req.params;
     const { userId, role } = req.authUser;
     const user = await updateUserByIdFromDB(userId, req.body);
 
-    res.status(200).json({
+    return res.status(200).json({
         status: 'success',
         data: user
     })
@@ -92,7 +98,7 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
 //     // console.log(req.authUser, req.body.ticket_id);
 //     const allUsers = await addTicketInDB(userId, req.body.ticket_id);
 //     // console.log("user controller", allUsers);
-//     res.status(200).json({
+//     return res.status(200).json({
 //         status: 'success',
 //         data: allUsers
 //     })
@@ -102,7 +108,7 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
 // export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 //     const allUsers = await getUsersFromDB();
 //     // console.log("user controller", allUsers);
-//     res.status(200).json({
+//     return res.status(200).json({
 //         status: 'success',
 //         data: allUsers
 //     })
@@ -111,7 +117,7 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
 // export const getAdminUsers = async (req: Request, res: Response, next: NextFunction) => {
 //     const user = await getAdminFromDB();
 
-//     res.status(200).json({
+//     return res.status(200).json({
 //         status: 'success',
 //         data: user
 //     })
