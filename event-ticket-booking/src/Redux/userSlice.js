@@ -30,10 +30,6 @@ const userSlice = createSlice({
   },
 });
 
-// export const userData = (state) => state.user.userData;
-// export const userToken = (state) => state.user.token;
-
-
 export const { setUserData, clearUserData } = userSlice.actions;
 
 export default userSlice.reducer;

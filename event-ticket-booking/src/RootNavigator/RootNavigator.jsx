@@ -19,12 +19,15 @@ import OrganizerList from '../Screens/SuperAdmin/OrganizerList';
 import AdminProfile from '../Screens/SuperAdmin/AdminProfile';
 
 const RootNavigator = () => {
+    const dispatch = useDispatch();
+    const Tab = createBottomTabNavigator();
     const Stack = createNativeStackNavigator();
     const token = useSelector((state) => state.user.token);
     const user = useSelector((state) => state.user.userData);
     // console.log(user, token);
-    const dispatch = useDispatch();
-    const Tab = createBottomTabNavigator();
+
+
+
 
     const screenOptionStyle = {
         headerShown: false
@@ -66,7 +69,7 @@ const RootNavigator = () => {
 
     return (
         <>
-            {/* <Tab.Navigator
+            <Tab.Navigator
                 screenOptions={{
                     tabBarHideOnKeyboard: false,
                     // tabBarShowLabel: false,
@@ -111,11 +114,11 @@ const RootNavigator = () => {
                         ),
                     }}
                 />
-            </Tab.Navigator> */}
+            </Tab.Navigator>
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="select-city" component={SelectCity} />
             </Stack.Navigator> */}
-            {
+            {/* {
                 token === "" ?
                     <Stack.Navigator screenOptions={screenOptionStyle}>
                         <Stack.Screen name="landing" component={LandingPage} />
@@ -123,7 +126,7 @@ const RootNavigator = () => {
                         <Stack.Screen name="registration" component={Registration} />
                     </Stack.Navigator>
                     :
-                    (user?.selected_city === "")
+                    (user?.role !== "organizer" && (user?.selected_city === "" || !user?.selected_city))
                         ?
                         <Stack.Navigator screenOptions={screenOptionStyle}>
                             <Stack.Screen name="select-city" component={SelectCity} />
@@ -215,7 +218,7 @@ const RootNavigator = () => {
                                         </View>
                             }
                         </>
-            }
+            } */}
         </>
     );
 };
