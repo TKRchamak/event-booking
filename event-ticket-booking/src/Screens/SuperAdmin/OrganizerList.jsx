@@ -88,6 +88,9 @@ const OrganizerList = (props) => {
                 <View style={[styles.myTabBtnStyle, activeTab === "active" && { borderColor: '#ffffff' }]}>
                     <Text onPress={() => setActiveTab("request")} style={{ textAlign: "center", fontSize: 20, fontWeight: 600 }}>REQUESTED</Text>
                 </View>
+                {/* <View style={[styles.myTabBtnStyle,]}>
+                    <Text onPress={() => navigation.navigate("organizer-detail")} style={{ textAlign: "center", fontSize: 20, fontWeight: 600 }}>REQUESTED</Text>
+                </View> */}
             </View>
 
 

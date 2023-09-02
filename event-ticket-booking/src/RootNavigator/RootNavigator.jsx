@@ -17,6 +17,9 @@ import { BottomNavigation } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons';
 import OrganizerList from '../Screens/SuperAdmin/OrganizerList';
 import AdminProfile from '../Screens/SuperAdmin/AdminProfile';
+import OrganizerDetail from '../Screens/SuperAdmin/OrganizerDetail';
+
+
 
 const RootNavigator = () => {
     const dispatch = useDispatch();
@@ -65,6 +68,15 @@ const RootNavigator = () => {
     }, [])
 
 
+    const AdminOrganizerStack = () => {
+        return (
+            <Stack.Navigator screenOptions={screenOptionStyle}>
+                <Stack.Screen name="organizer-list" component={OrganizerList} />
+                <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+            </Stack.Navigator>
+        )
+    }
+
 
 
     return (
@@ -84,7 +96,6 @@ const RootNavigator = () => {
                 }}
             >
 
-
                 <Tab.Screen
                     name="Home"
                     component={Dashboard}
@@ -97,7 +108,7 @@ const RootNavigator = () => {
 
                 <Tab.Screen
                     name="Organizer List"
-                    component={OrganizerList}
+                    component={AdminOrganizerStack}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign name="profile" color={color} size={size} />
