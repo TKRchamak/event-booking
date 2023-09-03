@@ -1,0 +1,43 @@
+{
+    "navigation": {
+        "addListener": [Function addListener], 
+        "canGoBack": [Function canGoBack], 
+        "dispatch": [Function dispatch], 
+        "getId": [Function getId], 
+        "getParent": [Function getParent], 
+        "getState": [Function anonymous], 
+        "goBack": [Function anonymous], 
+        "isFocused": [Function isFocused], 
+        "jumpTo": [Function anonymous], 
+        "navigate": [Function anonymous], 
+        "pop": [Function anonymous], 
+        "popToTop": [Function anonymous], 
+        "push": [Function anonymous], 
+        "removeListener": [Function removeListener], 
+        "replace": [Function anonymous], 
+        "reset": [Function anonymous], 
+        "setOptions": [Function setOptions], 
+        "setParams": [Function anonymous]
+    }, 
+    "route": {
+        "key": "organizer-detail-LyQvB_8Pb50cvxrEaez5d", 
+        "name": "organizer-detail", 
+        "params": {
+            "__v": 0, 
+            "_id": "64f2ef50ecbec3a424fe0d4f", 
+            "description": "We are arranging the sports event, we are providing ticket.", 
+            "email": "organizer@organizer.com", 
+            "event_list": [Array], 
+            "followers": [Array], 
+            "name": "Tonmoy", 
+            "organization_logo": "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693642425/fwvh2uq7upbyobdae9qs.jpg", 
+            "organization_name": "Organizer", 
+            "organization_title": "Organizer", 
+            "password": "$2b$10$n4kxvAbPJyBH3arjqZ3iPuZC2G5.V/wXRHdhM2cbHg9fzx4Yy4uOC", 
+            "role": "organizer", 
+            "status": "pending", 
+            "username": "Tonmoy"
+        }, 
+        "path": undefined
+    }
+}

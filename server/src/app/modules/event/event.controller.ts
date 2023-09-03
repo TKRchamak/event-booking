@@ -103,6 +103,31 @@ export const getOrganizerEventList = async (req: Request | any, res: Response, n
     }
 }
 
+//get event_type by id or event_type list
+export const getOrganizerEventListByAdmin = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        if (role !== "admin") {
+            return res.status(500).json({
+                status: "error",
+                error: "You are not Authorized"
+            })
+        }
+        const eventList = await getEventListByIdList(req.body._id);
+        return res.status(200).json({
+            status: "success",
+            data: eventList
+        })
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "error",
+            error
+        })
+    }
+}
+
 //edit event_type by event_type or event_type list
 export const updateEventData = async (req: Request | any, res: Response, next: NextFunction) => {
     try {

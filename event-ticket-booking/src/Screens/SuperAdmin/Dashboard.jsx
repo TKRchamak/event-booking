@@ -23,20 +23,20 @@ const Dashboard = (props) => {
     const requestOrganizerList = useSelector((state) => state.organizer.allRequestOrganizerList);
     const eventList = useSelector((state) => state.event.allEventList);
 
-    const loginFunc = async () => {
-        const { data } = await axios.post(
-            `${rootUrl}/api/v1/user/login`,
-            {
-                email: "admin@admin.com",
-                password: "admin"
-            }
-        );
-        if (data.token) {
-            dispatch(setUserData(data));
-        } else {
-            throw data;
-        }
-    }
+    // const loginFunc = async () => {
+    //     const { data } = await axios.post(
+    //         `${rootUrl}/api/v1/user/login`,
+    //         {
+    //             email: "admin@admin.com",
+    //             password: "admin"
+    //         }
+    //     );
+    //     if (data.token) {
+    //         dispatch(setUserData(data));
+    //     } else {
+    //         throw data;
+    //     }
+    // }
 
     const getOrganizerList = async () => {
         const headers = {
@@ -88,7 +88,7 @@ const Dashboard = (props) => {
             getOrganizerList();
             getEventList();
         }
-        else loginFunc();
+        // else loginFunc();
     }, [token])
 
 

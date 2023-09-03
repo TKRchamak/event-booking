@@ -1,5 +1,5 @@
 import express from "express";
-import { addEvent, addReviewForEventData, getEvent, getOrganizerEventList, updateEventData } from "./event.controller";
+import { addEvent, addReviewForEventData, getEvent, getOrganizerEventList, getOrganizerEventListByAdmin, updateEventData } from "./event.controller";
 import authentication from "../../middlewares/authentication.middleware";
 const router = express.Router();
 
@@ -14,7 +14,8 @@ const router = express.Router();
 router.post("/create", authentication, addEvent);
 router.get("/", getEvent);
 router.put("/update/:id", authentication, updateEventData);
-router.get("/eventList", authentication, getOrganizerEventList);
+router.get("/organizer-eventList", authentication, getOrganizerEventList);
+router.post("/admin/organizer-eventList", authentication, getOrganizerEventListByAdmin);
 router.post("/add-review/:id", addReviewForEventData);
 router.get("/:id", getEvent);
 

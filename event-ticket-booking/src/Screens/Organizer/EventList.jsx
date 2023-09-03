@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import HeaderBar from '../../Components/HeaderBar/HeaderBar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,12 +6,19 @@ import Colors from '../../utils/Colors';
 import CustomInput from '../../Components/CustomInput/CustomInput';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
+import axios from 'axios';
+import rootUrl from '../../Services/rootUrl';
+import { setUserData } from '../../Redux/userSlice';
+import { setOrganizerEventList } from '../../Redux/eventSlice';
+import { EvilIcons } from '@expo/vector-icons';
 
 
-
-const OrganizerList = ({ navigation }) => {
-    const activeOrganizerList = useSelector((state) => state.organizer.allActiveOrganizerList);
-
+const EventList = ({ navigation }) => {
+    const dispatch = useDispatch();
+    const token = useSelector((state) => state.user.token);
+    const user = useSelector((state) => state.user.userData);
+    const myEventList = useSelector((state) => state.event.organizersEventList);
+    console.log(myEventList);
     const [searchQuery, setSearchQuery] = useState('');
     const onChangeSearch = query => {
         setSearchQuery(query);
@@ -22,11 +29,57 @@ const OrganizerList = ({ navigation }) => {
         // }
     };
 
-    const organizerFlatList = (dataList) => {
+    const getThisOrganizerEvents = async () => {
+        const headers = {
+            'X-Auth-Token': token
+        };
+        try {
+            const { data } = await axios.get(
+                `${rootUrl}/api/v1/event/organizer-eventList`,
+                {
+                    headers
+                }
+            );
+            if (data.status === "success") {
+                dispatch(setOrganizerEventList(data.data));
+            } else {
+                throw data;
+            }
+        } catch (error) {
+            console.log(error);
+            // showDialog("Something Wrong");
+        }
+    }
+
+    const loginFunc = async () => {
+        const { data } = await axios.post(
+            `${rootUrl}/api/v1/organizer/login`,
+            {
+                email: "organizer@organizer.com",
+                password: "Organizer"
+            }
+        );
+        if (data.token) {
+            dispatch(setUserData(data));
+        } else {
+            throw data;
+        }
+    }
+
+    useEffect(() => {
+        if (token) {
+            if (user?.status === "active") {
+                getThisOrganizerEvents()
+            }
+        } else loginFunc();
+    }, [])
+
+
+    const eventFlatList = (dataList) => {
         return (
             <FlatList
                 data={dataList}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item?._id}
                 style={{
                     flex: 1,
                     width: "100%",
@@ -37,7 +90,7 @@ const OrganizerList = ({ navigation }) => {
                 }}
                 renderItem={({ item }) =>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("organizer-detail", item)}
+                        // onPress={() => navigation.navigate("organizer-detail", item)}
                         style={{
                             flex: 1,
                             flexDirection: "row",
@@ -60,11 +113,11 @@ const OrganizerList = ({ navigation }) => {
                             // borderColor: "red"
                         }}>
                             {
-                                (!item?.organization_logo)
+                                (!item?.image)
                                     ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                                         <Avatar.Icon size={90} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
                                     </View>
-                                    : <Image source={{ uri: item?.organization_logo }} style={{ width: "100%", height: "100%" }} />
+                                    : <Image source={{ uri: item?.image }} style={{ width: "100%", height: "100%" }} />
                             }
                         </View>
                         <View style={{
@@ -84,8 +137,9 @@ const OrganizerList = ({ navigation }) => {
                                 // borderWidth: 2,
                                 // borderColor: "red"
                             }}>
-                                <Text style={{ color: "#000000", fontSize: 22, fontWeight: 600 }}>{item?.organization_name}</Text>
+                                <Text style={{ color: "#000000", fontSize: 22, fontWeight: 600 }}>{item?.name}</Text>
                             </View>
+
                             <View style={{
                                 flex: 1,
                                 width: '100%',
@@ -99,11 +153,12 @@ const OrganizerList = ({ navigation }) => {
                                     alignItems: "center",
                                     marginBottom: 2
                                 }}>
-                                    <MaterialIcons name="event" size={20} color={Colors.gray} />
+                                    <MaterialIcons name="category" size={20} color={Colors.gray} />
                                     <Text style={{ color: Colors.gray, fontSize: 16, paddingLeft: 5 }}>
-                                        {item?.event_list.length > 1 ? `${item?.event_list.length} events` : `${item?.event_list.length} event`}
+                                        {item?.type}
                                     </Text>
                                 </View>
+
                                 <View style={{
                                     flexDirection: "row",
                                     alignItems: "center",
@@ -112,6 +167,18 @@ const OrganizerList = ({ navigation }) => {
                                     <MaterialIcons name="event" size={20} color={Colors.gray} />
                                     <Text style={{ color: Colors.gray, fontSize: 16, paddingLeft: 5 }}>
                                         2023
+                                    </Text>
+                                </View>
+
+                                <View style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginBottom: 2
+                                }}>
+                                    {/* <MaterialIcons name="location" size={20} color={Colors.gray} /> */}
+                                    <EvilIcons name="location" size={20} color={Colors.gray} />
+                                    <Text style={{ color: Colors.gray, fontSize: 16, paddingLeft: 5 }}>
+                                        {item?.city}
                                     </Text>
                                 </View>
                             </View>
@@ -124,15 +191,16 @@ const OrganizerList = ({ navigation }) => {
 
     return (
         <View style={styles.headerContainer}>
-            <HeaderBar navigation={navigation} name={"Organizer List"}></HeaderBar>
+            <HeaderBar backButton={true} navigation={navigation} name={"Event List"}></HeaderBar>
             <CustomInput searchText={searchQuery} setSearchText={onChangeSearch}></CustomInput>
 
             {
-                activeOrganizerList && organizerFlatList(activeOrganizerList)
+                myEventList.length > 0 && eventFlatList(myEventList)
             }
         </View >
     );
 };
+
 
 const styles = StyleSheet.create({
     headerContainer: {
@@ -201,4 +269,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OrganizerList;
+export default EventList;

@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import HeaderBar from '../../Components/HeaderBar/HeaderBar';
-import { useDispatch, useSelector } from 'react-redux';
-import Colors from '../../utils/Colors';
 import CustomInput from '../../Components/CustomInput/CustomInput';
-import { MaterialIcons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import Colors from '../../utils/Colors';
 import { Avatar } from 'react-native-paper';
+import { MaterialIcons } from '@expo/vector-icons';
 
-
-
-const OrganizerList = ({ navigation }) => {
-    const activeOrganizerList = useSelector((state) => state.organizer.allActiveOrganizerList);
-
+const RequestOrganizerList = ({ navigation }) => {
+    const requestOrganizerList = useSelector((state) => state.organizer.allRequestOrganizerList);
     const [searchQuery, setSearchQuery] = useState('');
     const onChangeSearch = query => {
         setSearchQuery(query);
@@ -124,11 +121,10 @@ const OrganizerList = ({ navigation }) => {
 
     return (
         <View style={styles.headerContainer}>
-            <HeaderBar navigation={navigation} name={"Organizer List"}></HeaderBar>
+            <HeaderBar navigation={navigation} name={"Requested Organizer List"}></HeaderBar>
             <CustomInput searchText={searchQuery} setSearchText={onChangeSearch}></CustomInput>
-
             {
-                activeOrganizerList && organizerFlatList(activeOrganizerList)
+                requestOrganizerList && organizerFlatList(requestOrganizerList)
             }
         </View >
     );
@@ -201,4 +197,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OrganizerList;
+
+export default RequestOrganizerList;

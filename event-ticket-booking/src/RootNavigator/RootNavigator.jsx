@@ -18,6 +18,10 @@ import { AntDesign } from '@expo/vector-icons';
 import OrganizerList from '../Screens/SuperAdmin/OrganizerList';
 import AdminProfile from '../Screens/SuperAdmin/AdminProfile';
 import OrganizerDetail from '../Screens/SuperAdmin/OrganizerDetail';
+import RequestOrganizerList from '../Screens/SuperAdmin/RequestOrganizerList';
+import EventList from '../Screens/Organizer/EventList';
+import Profile from '../Screens/SuperAdmin/Profile';
+import AddEvent from '../Screens/Organizer/AddEvent';
 
 
 
@@ -28,19 +32,6 @@ const RootNavigator = () => {
     const token = useSelector((state) => state.user.token);
     const user = useSelector((state) => state.user.userData);
     // console.log(user, token);
-
-
-
-
-    const screenOptionStyle = {
-        headerShown: false
-    }
-
-    // axios.defaults.headers.common = {
-    //     // 'Authorization': `Bearer ${token}`
-    //     'X-Auth-Token': `${token}`
-    // };
-
 
     useEffect(() => {
         const asyncStorageData = async () => {
@@ -67,23 +58,15 @@ const RootNavigator = () => {
         return () => { asyncStorageData() }
     }, [])
 
-
-    const AdminOrganizerStack = () => {
-        return (
-            <Stack.Navigator screenOptions={screenOptionStyle}>
-                <Stack.Screen name="organizer-list" component={OrganizerList} />
-                <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
-            </Stack.Navigator>
-        )
+    const screenOptionStyle = {
+        headerShown: false
     }
 
-
-
-    return (
-        <>
+    const AdminTabNavigation = () => {
+        return (
             <Tab.Navigator
                 screenOptions={{
-                    tabBarHideOnKeyboard: false,
+                    tabBarHideOnKeyboard: true,
                     // tabBarShowLabel: false,
                     tabBarStyle: {
                         paddingBottom: 5,
@@ -108,7 +91,7 @@ const RootNavigator = () => {
 
                 <Tab.Screen
                     name="Organizer List"
-                    component={AdminOrganizerStack}
+                    component={OrganizerList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign name="profile" color={color} size={size} />
@@ -117,8 +100,18 @@ const RootNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="Settings"
-                    component={LandingPage}
+                    name="Request List"
+                    component={RequestOrganizerList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="profile" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Profile"
+                    component={Profile}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign name="user" color={color} size={size} />
@@ -126,6 +119,137 @@ const RootNavigator = () => {
                     }}
                 />
             </Tab.Navigator>
+        )
+    }
+
+
+    const OrganizerTabNavigation = () => {
+        return (
+            <Tab.Navigator
+                screenOptions={{
+                    tabBarHideOnKeyboard: true,
+                    // tabBarShowLabel: false,
+                    tabBarStyle: {
+                        paddingBottom: 5,
+                        height: 60,
+                        backgroundColor: 'white', // Background color of the bottom navigation bar
+                    },
+                    activeTintColor: Colors.themeColorLow, // Color for the selected tab
+                    inactiveTintColor: Colors.gray, // Color for inactive tabs
+                    headerShown: false
+                }}
+            >
+
+                {/* <Tab.Screen
+                    name="Home"
+                    component={EventList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="home" color={color} size={size} />
+                        ),
+                    }}
+                /> */}
+
+                {/* <Tab.Screen
+                    name="Organizer List"
+                    component={OrganizerList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="profile" color={color} size={size} />
+                        ),
+                    }}
+                /> */}
+
+                <Tab.Screen
+                    name="Add Event"
+                    component={AddEvent}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="pluscircleo" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Profile"
+                    component={Profile}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="user" color={color} size={size} />
+                        ),
+                    }}
+                />
+            </Tab.Navigator>
+        )
+    }
+
+
+    const UserTabNavigation = () => {
+        return (
+            <Tab.Navigator
+                screenOptions={{
+                    tabBarHideOnKeyboard: true,
+                    // tabBarShowLabel: false,
+                    tabBarStyle: {
+                        paddingBottom: 5,
+                        height: 60,
+                        backgroundColor: 'white', // Background color of the bottom navigation bar
+                    },
+                    activeTintColor: Colors.themeColorLow, // Color for the selected tab
+                    inactiveTintColor: Colors.gray, // Color for inactive tabs
+                    headerShown: false
+                }}
+            >
+
+                <Tab.Screen
+                    name="Home"
+                    component={Dashboard}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="home" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Organizer List"
+                    component={OrganizerList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="profile" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Request List"
+                    component={RequestOrganizerList}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="profile" color={color} size={size} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Profile"
+                    component={Profile}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="user" color={color} size={size} />
+                        ),
+                    }}
+                />
+            </Tab.Navigator>
+        )
+    }
+
+    return (
+        <>
+            <Stack.Navigator screenOptions={screenOptionStyle}>
+                <Stack.Screen name="admin" component={OrganizerTabNavigation} />
+                {/* <Stack.Screen name="organizer-detail" component={OrganizerDetail} /> */}
+            </Stack.Navigator>
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="select-city" component={SelectCity} />
             </Stack.Navigator> */}
@@ -147,86 +271,22 @@ const RootNavigator = () => {
                             {
                                 user?.role === "admin"
                                     ?
-                                    <Tab.Navigator
-                                        screenOptions={{
-                                            tabBarHideOnKeyboard: false,
-                                            // tabBarShowLabel: false,
-                                            tabBarStyle: {
-                                                paddingBottom: 5,
-                                                height: 60,
-                                                backgroundColor: 'white', // Background color of the bottom navigation bar
-                                            },
-                                            activeTintColor: Colors.themeColorLow, // Color for the selected tab
-                                            inactiveTintColor: Colors.gray, // Color for inactive tabs
-                                            headerShown: false
-                                        }}
-                                    >
-
-
-                                        <Tab.Screen
-                                            name="Home"
-                                            component={Dashboard}
-                                            options={{
-                                                tabBarIcon: ({ color, size }) => (
-                                                    <AntDesign name="home" color={color} size={size} />
-                                                ),
-                                            }}
-                                        />
-
-                                        <Tab.Screen
-                                            name="Organizer List"
-                                            component={OrganizerList}
-                                            options={{
-                                                tabBarIcon: ({ color, size }) => (
-                                                    <AntDesign name="profile" color={color} size={size} />
-                                                ),
-                                            }}
-                                        />
-
-                                        <Tab.Screen
-                                            name="Settings"
-                                            component={AdminProfile}
-                                            options={{
-                                                tabBarIcon: ({ color, size }) => (
-                                                    <AntDesign name="user" color={color} size={size} />
-                                                ),
-                                            }}
-                                        />
-                                    </Tab.Navigator>
+                                    <Stack.Navigator screenOptions={screenOptionStyle}>
+                                        <Stack.Screen name="admin" component={AdminTabNavigation} />
+                                        <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+                                    </Stack.Navigator>
                                     :
                                     user?.role === "organizer"
                                         ?
-                                        <View style={{ flex: 1, width: "100%", justifyContent: "center", }}>
-                                            <Text style={{ textAlign: "center", fontSize: 18, marginBottom: 20 }}>I am Organizer</Text>
-                                            <CustomBtn
-                                                height={60}
-                                                width={500}
-                                                textColor={Colors.light}
-                                                text={"Log Out"}
-                                                marginBottom={80}
-                                                func={async () => {
-                                                    await AsyncStorage.removeItem("userData");
-                                                    await AsyncStorage.removeItem("userToken");
-                                                    dispatch(clearUserData());
-                                                }}
-                                            />
-                                        </View>
+                                        <Stack.Navigator screenOptions={screenOptionStyle}>
+                                            <Stack.Screen name="admin" component={OrganizerTabNavigation} />
+                                            <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+                                        </Stack.Navigator>
                                         :
-                                        <View style={{ flex: 1, width: "100%", justifyContent: "center", }}>
-                                            <Text style={{ textAlign: "center", fontSize: 18, marginBottom: 20 }}>I am User</Text>
-                                            <CustomBtn
-                                                height={60}
-                                                width={500}
-                                                textColor={Colors.light}
-                                                text={"Log Out"}
-                                                marginBottom={80}
-                                                func={async () => {
-                                                    await AsyncStorage.removeItem("userData");
-                                                    await AsyncStorage.removeItem("userToken");
-                                                    dispatch(clearUserData());
-                                                }}
-                                            />
-                                        </View>
+                                        <Stack.Navigator screenOptions={screenOptionStyle}>
+                                            <Stack.Screen name="admin" component={UserTabNavigation} />
+                                            <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+                                        </Stack.Navigator>
                             }
                         </>
             } */}

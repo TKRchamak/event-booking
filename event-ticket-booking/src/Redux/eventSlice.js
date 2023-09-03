@@ -16,14 +16,12 @@ const organizerSlice = createSlice({
         setAllEventList: (state, action) => {
             if (action.payload.data) {
                 state.allEventList = action.payload.data;
-                AsyncStorage.setItem("allActiveOrganizerList", JSON.stringify(action.payload.data))
+                // AsyncStorage.setItem("allActiveOrganizerList", JSON.stringify(action.payload.data))
             }
         },
         setOrganizerEventList: (state, action) => {
-            if (action.payload.data) {
-                state.organizersEventList = action.payload.data;
-                AsyncStorage.setItem("allActiveOrganizerList", JSON.stringify(action.payload.data))
-            }
+            state.organizersEventList = action.payload;
+            // AsyncStorage.setItem("allActiveOrganizerList", JSON.stringify(action.payload.data))
         },
         setCurrentEvent: (state, action) => {
             if (action.payload.data) {

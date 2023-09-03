@@ -16,6 +16,6 @@ router.get("/detail", authentication, getOrganizerByIdToken); //role organizer
 router.put("/update", authentication, updateOrganizerData); //role organizer
 
 router.get("/all", authentication, getAllOrganizer); // role admin
-router.post("/admin-approval", authentication, updateOrganizerState); // role admin
+router.put("/admin-approval", authentication, updateOrganizerState); // role admin
 
 export default router;
