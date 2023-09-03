@@ -1,44 +1,61 @@
-import React, { useCallback, useState } from 'react';
-import Colors from '../../utils/Colors';
-import { Text, TextInput, Image, View, StyleSheet, ScrollView, Pressable, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
-import HeaderBar from '../../Components/HeaderBar/HeaderBar';
-import Checkbox from 'expo-checkbox';
-import CustomBtn from '../../Components/CustomBtn/CustomBtn';
-import FontUtils from '../../utils/FontUtils';
-import { Picker } from '@react-native-picker/picker';
-import { AntDesign } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
-import { Button, Dialog, Portal } from 'react-native-paper';
+import React, { useCallback, useEffect, useState } from "react";
+import Colors from "../../utils/Colors";
+import {
+    Text,
+    TextInput,
+    Image,
+    View,
+    StyleSheet,
+    ScrollView,
+    Pressable,
+    TouchableOpacity,
+    FlatList,
+    ActivityIndicator,
+    StatusBar
+    // Modal,
+} from "react-native";
+import Modal from 'react-native-modal';
+import CustomBtn from "../../Components/CustomBtn/CustomBtn";
+import FontUtils from "../../utils/FontUtils";
+import { Picker } from "@react-native-picker/picker";
+import { AntDesign } from "@expo/vector-icons";
+import { Avatar } from "react-native-paper";
+import { Button, Dialog, Portal } from "react-native-paper";
 
-import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { multipleImage, singleImage } from '../../Services/PickImage';
-import rootUrl from '../../Services/rootUrl';
-import { setUserData } from '../../Redux/userSlice';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import { LinearGradient } from 'expo-linear-gradient';
-
-
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { multipleImage, singleImage } from "../../Services/PickImage";
+import rootUrl from "../../Services/rootUrl";
+import { setUserData } from "../../Redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { LinearGradient } from "expo-linear-gradient";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Chip } from 'react-native-paper';
+import uuid from 'react-native-uuid';
+import { EvilIcons } from '@expo/vector-icons';
+import { setOrganizerEventList } from "../../Redux/eventSlice";
 
 const AddEvent = ({ navigation }) => {
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.userData);
+    const token = useSelector((state) => state.user.token);
+    const eventLocation = useSelector((state) => state.organizer.currentCreationEventLocation);
     const [inputRegUser, setInputRegUser] = useState({});
-    const [selectedValue, setSelectedValue] = useState("");
+    const [selectedCity, setSelectedCity] = useState("");
+    const [selectedType, setSelectedType] = useState("");
     const [photo, setPhoto] = useState(null);
+    const [poster, setPoster] = useState(null);
     const [regLoading, setRegLoading] = useState(false);
-
-
-
+    const [cityList, setCityList] = useState([]);
+    const [eventTypeList, setEventTypeList] = useState([]);
 
     const [visible, setVisible] = useState([false, ""]);
     const showDialog = (text) => setVisible([true, text]);
     const hideDialog = () => setVisible([false, ""]);
 
-
-
     const pickImage = async () => {
-        setPhoto("loading")
+        setPhoto("loading");
         let imgUrl = await singleImage();
         // let imgUrl = await multipleImage();
         if (imgUrl === "image not selected") {
@@ -48,17 +65,155 @@ const AddEvent = ({ navigation }) => {
         setPhoto(imgUrl);
     };
 
+    const pickPoster = async () => {
+        setPoster("loading");
+        let imgUrl = await singleImage([6, 4]);
+        // let imgUrl = await multipleImage();
+        if (imgUrl === "image not selected") {
+            setPoster(null);
+            return;
+        }
+        setPoster(imgUrl);
+    };
+
     const handleInputChange = (text, label) => {
         const newData = { ...inputRegUser };
         newData[label] = text;
         setInputRegUser(newData);
     };
 
+    const getCityList = async () => {
+        try {
+            const { data } = await axios.get(`${rootUrl}/api/v1/city/`);
+            if (data.status === 'success') {
+                setCityList(data.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const getEventTypeList = async () => {
+        try {
+            const { data } = await axios.get(`${rootUrl}/api/v1/event_type/`);
+            if (data.status === 'success') {
+                setEventTypeList(data.data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getCityList();
+        getEventTypeList();
+    }, [])
+
+
+    const [timeSlots, setTimeSlots] = useState([]);
+    const handleAddTimeSlot = (start, end) => {
+        const id = uuid.v4();
+        const newTimeSlot = {
+            id: `${id}`, // You should use a more reliable way to generate IDs
+            from: start,
+            to: end,
+        };
+        setTimeSlots([...timeSlots, newTimeSlot]);
+    };
+    const removeTimeSlot = (props) => {
+        let newData = timeSlots.filter(item => item.id !== props.id);
+        setTimeSlots(newData);
+    }
+
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const [fromTime, setFromTime] = useState(new Date());
+    const [toTime, setToTime] = useState(new Date());
+    const [showFromPicker, setShowFromPicker] = useState(false);
+    const [showToPicker, setShowToPicker] = useState(false);
+    const handleFromTimeChange = (event, selectedTime) => {
+        if (selectedTime) {
+            setFromTime(selectedTime);
+            setShowFromPicker(false);
+        }
+    };
+    const handleToTimeChange = (event, selectedTime) => {
+        if (selectedTime) {
+            setToTime(selectedTime);
+            setShowToPicker(false);
+        }
+    };
+
+    const getThisOrganizerEvents = async () => {
+        const headers = {
+            'X-Auth-Token': token
+        };
+        try {
+            const { data } = await axios.get(
+                `${rootUrl}/api/v1/event/organizer-eventList`,
+                {
+                    headers
+                }
+            );
+            if (data.status === "success") {
+                dispatch(setOrganizerEventList(data.data));
+            } else {
+                throw data;
+            }
+        } catch (error) {
+            console.log(error);
+            // showDialog("Something Wrong");
+        }
+    }
+
+    const createAnEvent = async (d) => {
+        const headers = {
+            'X-Auth-Token': token
+        };
+        const requestData = {
+            ...inputRegUser,
+            location: eventLocation,
+            timeSlot: timeSlots,
+            city: selectedCity,
+            type: selectedType,
+            organizer: user._id,
+            image: photo,
+            poster: poster,
+        };
+
+        console.log(requestData);
+
+        try {
+            const { data } = await axios.post(
+                `${rootUrl}/api/v1/event/create`, requestData,
+                {
+                    headers
+                }
+            );
+            if (data.status === "success") {
+                showDialog("This Event Created Successfully");
+                getThisOrganizerEvents();
+                navigation.navigate("Home");
+            } else {
+                throw data;
+            }
+        } catch (error) {
+            console.log(error);
+            showDialog("Something Wrong");
+        }
+    }
 
     return (
-        <View style={styles.headerContainer}>
+        <ScrollView style={styles.headerContainer}>
             <Portal>
-                <Dialog visible={visible[0]} onDismiss={hideDialog} style={{ color: Colors.error }}>
+                <Dialog
+                    visible={visible[0]}
+                    onDismiss={hideDialog}
+                    style={{ color: Colors.error }}
+                >
                     <Dialog.Title>Alert</Dialog.Title>
                     <Dialog.Content>
                         <Text variant="bodyMedium">{visible[1]}</Text>
@@ -69,60 +224,95 @@ const AddEvent = ({ navigation }) => {
                 </Dialog>
             </Portal>
 
-            <View style={{
-                // flex: 1,
-                width: '100%',
-                height: 200,
-                // borderWidth: 2,
-                // borderColor: "blue",
-                // position: 'relative',
-            }}>
-                {
+            <Modal
+                isVisible={isModalVisible}
+                animationIn="slideInUp" // Use slideInUp for bottom to top animation
+                animationOut="slideOutDown" // Use slideOutDown for closing animation
+                backdropOpacity={0.5}
+                onBackdropPress={toggleModal}
+                animationInTiming={1000}
+                animationOutTiming={1000}
+                style={styles.modal}
+                avoidKeyboard={false}
+                onBackButtonPress={() => toggleModal()}
+            >
+                <View style={styles.modalContent}>
+                    {showFromPicker && (
+                        <DateTimePicker
+                            value={fromTime}
+                            mode="time"
+                            is24Hour={true}
+                            display="default"
+                            onChange={handleFromTimeChange}
+                        />
+                    )}
+                    {showToPicker && (
+                        <DateTimePicker
+                            value={toTime}
+                            mode="time"
+                            is24Hour={true}
+                            display="default"
+                            onChange={handleToTimeChange}
+                        />
+                    )}
 
-                    (photo === null)
-                        ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                            <Avatar.Icon size={90} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
-                            <Text>Event Logo</Text>
+
+                    <TouchableOpacity style={{ width: "100%", marginBottom: 20 }} onPress={() => setShowFromPicker(true)}>
+                        <Text style={{ fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Event Start From: </Text>
+                        <View style={{ height: 50, width: "100%", borderRadius: 16, borderColor: Colors.gray, borderWidth: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                            <Text style={{ fontSize: 20, fontWeight: 600 }}>{fromTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                         </View>
-                        : (photo === "loading") ? <ActivityIndicator animating={true} color={Colors.themeColorHigh} />
-                            : <Image source={{ uri: photo }} style={{ height: "100%", width: "100%", borderBottomLeftRadius: 20, borderBottomRightRadius: 20 }} />
-                }
-
-                {/* <View style={{
-                    flex: 1,
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: 20
-                }}>
-                    <TouchableOpacity
-                        onPress={() => pickImage()}
-                        style={{
-                            height: 200,
-                            width: 150,
-                            borderColor: Colors.gray,
-                            borderWidth: 1,
-                            borderRadius: 20,
-                            fontSize: 18,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: "hidden"
-                        }}>
-                        {
-                            (photo === null)
-                                ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                    <Avatar.Icon size={90} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
-                                    {
-                                        selectedValue === "organizer" ?
-                                            <Text>Organization Logo</Text>
-                                            : <Text>User Logo</Text>
-                                    }
-                                </View>
-                                : (photo === "loading") ? <ActivityIndicator animating={true} color={Colors.themeColorHigh} />
-                                    : <Image source={{ uri: photo }} style={{ width: "100%", height: "100%" }} />
-                        }
                     </TouchableOpacity>
-                </View> */}
+
+                    <TouchableOpacity style={{ width: "100%", marginBottom: 20 }} onPress={() => setShowToPicker(true)}>
+                        <Text style={{ fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Event End At:</Text>
+                        <View style={{ height: 50, width: "100%", borderRadius: 16, borderColor: Colors.gray, borderWidth: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                            <Text style={{ fontSize: 20, fontWeight: 600 }}>{toTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    <View style={{ width: "100%" }}>
+                        <CustomBtn
+                            height={60}
+                            marginBottom={10}
+                            textColor={Colors.light}
+                            text={"Close Modal"}
+                            func={() => {
+                                handleAddTimeSlot(fromTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), toTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                                toggleModal()
+                            }}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
+            <View style={{ width: "100%", height: 200 }}>
+                {/* ===================== poster area start ===================== */}
+                {poster === null ? (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <Avatar.Icon
+                            size={90}
+                            icon="camera"
+                            color={Colors.themeColorHigh}
+                            style={{ backgroundColor: Colors.light }}
+                        />
+                        <Text>Event Poster</Text>
+                    </View>
+                ) : poster === "loading" ? (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <ActivityIndicator size="large" animating={true} color={Colors.themeColorHigh} />
+                    </View>
+                ) : (
+                    <Image
+                        source={{ uri: poster }}
+                        style={{
+                            height: "100%",
+                            width: "100%",
+                            borderBottomLeftRadius: 20,
+                            borderBottomRightRadius: 20,
+                        }}
+                    />
+                )}
 
                 <LinearGradient
                     useAngle
@@ -133,286 +323,378 @@ const AddEvent = ({ navigation }) => {
                         // flex: 1,
                         left: 0,
                         top: 0,
-                        width: '100%',
-                        height: '100%',
-                        justifyContent: 'flex-end',
+                        width: "100%",
+                        height: "100%",
+                        justifyContent: "flex-end",
                         paddingHorizontal: 10,
                         borderBottomLeftRadius: 20,
                         borderBottomRightRadius: 20,
-                        position: 'absolute',
-                    }} />
-
-                <TouchableOpacity onPress={() => navigation.goBack()}
+                        position: "absolute",
+                    }}
+                />
+                <TouchableOpacity
+                    onPress={() => pickPoster()}
                     style={{
                         width: 35,
                         height: 40,
                         right: 20,
-                        top: 20,
-                        position: 'absolute',
+                        bottom: 20,
+                        position: "absolute",
                         borderWidth: 1,
                         borderColor: Colors.light,
                         alignItems: "center",
                         justifyContent: "center",
-                        borderRadius: 5
-                    }}>
+                        borderRadius: 5,
+                    }}
+                >
                     <AntDesign name="edit" size={24} color={Colors.light} />
                 </TouchableOpacity>
+                {/* ===================== poster area end ===================== */}
 
-                <View style={{
-                    // flex: 1,
-                    width: 100,
-                    height: 120,
-                    left: 40,
-                    top: 130,
-                    position: 'absolute',
-                    borderRadius: 15,
-                    overflow: "hidden",
-                    backgroundColor: Colors.light,
-                    borderWidth: 1,
-                    borderColor: "red"
-                }}>
-                    {/* {
-                        (!item?.organization_logo)
-                            ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Avatar.Icon size={90} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
-                            </View>
-                            : <Image source={{ uri: item?.organization_logo }} style={{ width: "100%", height: "100%" }} />
-                    } */}
-
-                    {
-                        (photo === null)
-                            ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Avatar.Icon size={40} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
-                                <Text>Event Logo</Text>
-                            </View>
-                            : (photo === "loading") ? <ActivityIndicator animating={true} color={Colors.themeColorHigh} />
-                                : <Image source={{ uri: photo }} style={{ width: "100%", height: "100%" }} />
-                    }
-                    <TouchableOpacity onPress={() => navigation.goBack()}
+                {/* Logo area */}
+                <View
+                    style={{
+                        width: 100,
+                        height: 120,
+                        left: 40,
+                        top: 130,
+                        position: "absolute",
+                        borderRadius: 15,
+                        overflow: "hidden",
+                        backgroundColor: Colors.light,
+                        borderWidth: 1,
+                        borderColor: Colors.gray,
+                    }}
+                >
+                    {photo === null ? (
+                        <View
+                            style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Avatar.Icon
+                                size={40}
+                                icon="camera"
+                                color={Colors.themeColorHigh}
+                                style={{ backgroundColor: Colors.light }}
+                            />
+                            <Text>Event Logo</Text>
+                        </View>
+                    ) : photo === "loading" ? (
+                        <View
+                            style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            <ActivityIndicator animating={true} color={Colors.themeColorHigh} />
+                        </View>
+                    ) : (
+                        <Image
+                            source={{ uri: photo }}
+                            style={{ width: "100%", height: "100%" }}
+                        />
+                    )}
+                    <TouchableOpacity
+                        onPress={() => pickImage()}
                         style={{
                             width: 30,
                             height: 30,
                             right: 5,
                             top: 5,
-                            position: 'absolute',
+                            position: "absolute",
                             borderWidth: 1,
                             borderColor: Colors.light,
                             alignItems: "center",
                             justifyContent: "center",
                             borderRadius: 5,
-                            backgroundColor: "#00000030"
-                        }}>
+                            backgroundColor: "#00000030",
+                        }}
+                    >
                         <AntDesign name="edit" size={20} color={Colors.dark} />
                     </TouchableOpacity>
                 </View>
 
-                <View style={{
-                    height: 40,
-                    left: 160,
-                    top: 210,
-                    position: 'absolute',
-                    // borderWidth: 2,
-                    // borderColor: "red"
-                }}>
+                {/* Title area */}
+                <View
+                    style={{
+                        height: 40,
+                        left: 160,
+                        top: 210,
+                        position: "absolute",
+                        // borderWidth: 2,
+                        // borderColor: "red",
+                    }}
+                >
                     {/* <Text style={{ fontSize: 24, fontWeight: 600 }}>{item?.organization_name}</Text> */}
                 </View>
             </View>
 
-            <View style={{
-                // flex: 1,
-                width: '100%',
-                // height: 120,
-                height: 60,
-                justifyContent: 'flex-end',
-                // borderWidth: 2,
-                // borderColor: "red"
-            }}>
-                <View style={{
+            {/* must need this space for logo image bottom portion */}
+            <View
+                style={{
                     // flex: 1,
-                    width: '100%',
-                    height: 50,
+                    width: "100%",
+                    // height: 120,
+                    height: 60,
+                    justifyContent: "flex-end",
                     // borderWidth: 2,
                     // borderColor: "red"
-                }} />
+                }}
+            >
+                <View
+                    style={{
+                        // flex: 1,
+                        width: "100%",
+                        height: 50,
+                        // borderWidth: 2,
+                        // borderColor: "red"
+                    }}
+                />
             </View>
 
-            <View style={[styles.myTabBtnArea]}>
-                {/* <View
-                    style={[
-                        styles.myTabBtnStyle,
-                        activeTab !== "about_organize" && { borderColor: "#ffffff" },
-                    ]}
-                >
-                    <Text
-                        style={{
-                            textAlign: "center",
-                            fontSize: 20,
-                            fontWeight: 600,
-                        }}
-                        onPress={() => setActiveTab("about_organize")}
-                    >
-                        About Organize
-                    </Text>
-                </View> */}
-
-                {/* {item?.status !== "pending" && (
-                    <View
-                        style={[
-                            styles.myTabBtnStyle,
-                            activeTab === "about_organize" && { borderColor: "#ffffff" },
-                        ]}
-                    >
-                        <Text
-                            onPress={() => setActiveTab("event_list")}
-                            style={{ textAlign: "center", fontSize: 20, fontWeight: 600 }}
-                        >
-                            Event List
-                        </Text>
-                    </View>
-                )} */}
-            </View>
+            {/* <SelectTimeSlot /> */}
 
             {/* mid area */}
-            <ScrollView style={[styles.productsContainer]}>
-                {/* <ScrollView style={{ flex: 1, backgroundColor: Colors.light }}> */}
+            <View style={[styles.productsContainer]}>
                 <View style={styles.loginContainer}>
-                    <Text style={{ color: Colors.themeColorHigh, fontSize: FontUtils.cfs.header3, alignSelf: "flex-start", paddingHorizontal: 20, paddingTop: 15, }}>Create Account</Text>
-                    <Text style={{ color: Colors.gray, fontSize: FontUtils.cfs.normal, alignSelf: "flex-start", paddingHorizontal: 20, paddingTop: 5, paddingBottom: 20 }}>
-                        Register now and start exploring all that our app has to offer. We’re excited to welcome you to our community!
+                    <Text
+                        style={{
+                            color: Colors.themeColorHigh,
+                            fontSize: FontUtils.cfs.header3,
+                            alignSelf: "flex-start",
+                            paddingHorizontal: 20,
+                            paddingBottom: 10,
+                        }}
+                    >
+                        Create Event
                     </Text>
+                    {/* <Text
+                        style={{
+                            color: Colors.gray,
+                            fontSize: FontUtils.cfs.normal,
+                            alignSelf: "flex-start",
+                            paddingHorizontal: 20,
+                            paddingTop: 5,
+                            paddingBottom: 20,
+                        }}
+                    >
+                        Register now and start exploring all that our app has to offer.
+                        We’re excited to welcome you to our community!
+                    </Text> */}
 
                     <View style={styles.inputView}>
 
+                        <TextInput
+                            style={styles.inputFieldStyle}
+                            onChangeText={(text) => handleInputChange(text, "name")}
+                            placeholder="Event Name"
+                            placeholderTextColor={Colors.gray}
+                        />
+
+                        <TextInput
+                            style={styles.inputFieldStyle}
+                            onChangeText={(text) => handleInputChange(text, "title")}
+                            placeholder="Event Title"
+                            placeholderTextColor={Colors.gray}
+                        />
+
+                        {/* city */}
                         <View style={{ flex: 1, flexGrow: 1, justifyContent: "center" }}>
-                            <View style={[styles.inputFieldStyle, { paddingHorizontal: 12, paddingVertical: 2 }]}>
+                            <View
+                                style={[
+                                    styles.inputFieldStyle,
+                                    { paddingHorizontal: 12, paddingVertical: 2 },
+                                ]}
+                            >
                                 <Picker
                                     placeholderTextColor={Colors.gray}
                                     style={[styles.picker, { fontSize: 18 }]}
-                                    selectedValue={selectedValue}
+                                    selectedValue={selectedCity}
                                     onValueChange={(itemValue, itemIndex) => {
-                                        setPhoto(null);
-                                        setSelectedValue(itemValue);
-                                        setInputRegUser({});
+                                        setSelectedCity(itemValue);
+                                    }}
+                                >
+                                    <Picker.Item label={"Event City"} value={""} />
+                                    {
+                                        cityList.map(city => <Picker.Item key={city._id} label={city.name} value={city.name} />)
                                     }
-                                    }>
-                                    <Picker.Item label={"Register as a"} value={""} />
-                                    <Picker.Item label={"User"} value={"user"} />
-                                    <Picker.Item label={"Organizer"} value={"organizer"} />
+                                </Picker>
+                            </View>
+                        </View>
+
+                        {/* type */}
+                        <View style={{ flex: 1, flexGrow: 1, justifyContent: "center" }}>
+                            <View
+                                style={[
+                                    styles.inputFieldStyle,
+                                    { paddingHorizontal: 12, paddingVertical: 2 },
+                                ]}
+                            >
+                                <Picker
+                                    placeholderTextColor={Colors.gray}
+                                    style={[styles.picker, { fontSize: 18 }]}
+                                    selectedValue={selectedType}
+                                    onValueChange={(itemValue, itemIndex) => {
+                                        setSelectedType(itemValue);
+                                    }}
+                                >
+                                    <Picker.Item label={"Event Type"} value={""} />
+                                    {
+                                        eventTypeList.map(event => <Picker.Item key={event._id} label={event.name} value={event.name} />)
+                                    }
                                 </Picker>
                             </View>
                         </View>
 
                         <TextInput
                             style={styles.inputFieldStyle}
-                            onChangeText={(text) => handleInputChange(text, "username")}
-                            placeholder="Username"
+                            onChangeText={(text) => handleInputChange(text, "duration")}
+                            placeholder="Event Time Duration in(minute)"
+                            keyboardType="numeric"
                             placeholderTextColor={Colors.gray}
                         />
 
                         <TextInput
                             style={styles.inputFieldStyle}
-                            onChangeText={(text) => handleInputChange(text, "name")}
-                            placeholder="Full Name"
+                            onChangeText={(text) => handleInputChange(text, "seat_quantity")}
+                            placeholder="Total Ticket Quantity"
+                            keyboardType="numeric"
                             placeholderTextColor={Colors.gray}
                         />
 
                         <TextInput
-                            style={styles.inputFieldStyle}
-                            onChangeText={(text) => handleInputChange(text, "email")}
-                            placeholder="Email"
+                            editable
+                            multiline
+                            numberOfLines={6}
+                            // maxLength={40}
+                            style={[styles.inputFieldStyle, { paddingVertical: 0 }]}
+                            onChangeText={(text) =>
+                                handleInputChange(text, "description")
+                            }
+                            placeholder="Event Description"
                             placeholderTextColor={Colors.gray}
                         />
 
                         <TextInput
-                            style={styles.inputFieldStyle}
-                            onChangeText={(text) => handleInputChange(text, "password")}
-                            placeholder="Password"
-                            secureTextEntry={true}
+                            editable
+                            multiline
+                            numberOfLines={6}
+                            // maxLength={40}
+                            style={[styles.inputFieldStyle, { paddingVertical: 0 }]}
+                            onChangeText={(text) =>
+                                handleInputChange(text, "general_info")
+                            }
+                            placeholder="Event Extra Information"
                             placeholderTextColor={Colors.gray}
                         />
 
-                        <TextInput
-                            style={styles.inputFieldStyle}
-                            onChangeText={(text) => handleInputChange(text, "confirm_Password")}
-                            placeholder="Confirm Password"
-                            secureTextEntry={true}
-                            placeholderTextColor={Colors.gray}
-                        />
+                        <View style={{
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            paddingHorizontal: 10,
+                            width: "100%",
+                            borderWidth: 1,
+                            borderRadius: 10,
+                            borderColor: Colors.gray,
+                            marginBottom: 10
+                        }}>
+                            {timeSlots.map((item) => (
+                                <Chip key={item.id} style={styles.chip} onPress={() => removeTimeSlot(item)}>
+                                    {`${item.from} - ${item.to}`} <AntDesign name="closecircleo" size={16} color="black" />
+                                </Chip>
+                            ))}
 
+                            <TouchableOpacity onPress={toggleModal} style={styles.addButton}>
+                                <Text style={styles.addButtonText}>Add Time Slot</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                        {
-                            selectedValue === "organizer" &&
-                            <>
-                                <TextInput
-                                    style={styles.inputFieldStyle}
-                                    onChangeText={(text) => handleInputChange(text, "organization_name")}
-                                    placeholder="Organizer Name"
-                                    placeholderTextColor={Colors.gray}
-                                />
-                                <TextInput
-                                    style={styles.inputFieldStyle}
-                                    onChangeText={(text) => handleInputChange(text, "organization_title")}
-                                    placeholder="Organization Title"
-                                    placeholderTextColor={Colors.gray}
-                                />
-                                <TextInput
-                                    editable
-                                    multiline
-                                    numberOfLines={6}
-                                    // maxLength={40}
-                                    style={[styles.inputFieldStyle, { paddingVertical: 0 }]}
-                                    onChangeText={(text) => handleInputChange(text, "description")}
-                                    placeholder="Description"
-                                    placeholderTextColor={Colors.gray}
-                                />
-                            </>
-                        }
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate("pick-location")}
+                            style={{
+                                flexDirection: "row",
+                                alignItems: 'center',
+                                justifyContent: "space-between",
+                                height: 50,
+                                padding: 10,
+                                width: "100%",
+                                borderWidth: 1,
+                                borderRadius: 10,
+                                borderColor: Colors.gray,
+                                marginTop: 10,
+                                marginBottom: 20,
+                            }}>
+                            <Text style={{ fontSize: 20, color: Colors.gray }}>Location</Text>
+                            <EvilIcons name="location" size={24} color={Colors.gray} />
+                        </TouchableOpacity>
 
                         <CustomBtn
                             height={60}
                             marginBottom={10}
                             textColor={Colors.light}
-                            text={regLoading ? <ActivityIndicator animating={true} color={Colors.themeColorHigh} /> : "Create Account"}
+                            text={
+                                regLoading ? (
+                                    <ActivityIndicator
+                                        size={"large"}
+                                        animating={true}
+                                        color={Colors.themeColorHigh}
+                                    />
+                                ) : (
+                                    "Create Event"
+                                )
+                            }
                             // disabled={true}
-                            func={() => registrationUser()}
+                            func={() => createAnEvent()}
                         />
                         {/* height, text, color, iconName, func, textColor */}
                     </View>
                 </View>
-                {/* </ScrollView > */}
-            </ScrollView>
-
-            {/* bottom button */}
-            {/* {
-                <View
-                    style={{
-                        marginTop: "auto",
-                        marginBottom: 0,
-                        width: "100%",
-                        flexDirection: "row",
-                    }}
-                >
-                    <View style={{ width: "100%" }}>
-                        <CustomBtn
-                            height={60}
-                            width={"100%"}
-                            radius={0}
-                            textColor={Colors.light}
-                            color1={Colors.error}
-                            color2={Colors.error}
-                            text={"Reject"}
-                            marginBottom={0}
-                            func={() => adminApprovalDecision("reject")}
-                        />
-                    </View>
-
-                </View>
-            } */}
-        </View >
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    modal: {
+        justifyContent: 'flex-end',
+        margin: 0,
+        backgroundColor: "transparent"
+    },
+    modalContent: {
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 20,
+        backgroundColor: 'white',
+        padding: 30,
+        alignItems: 'center',
+        height: "50%"
+    },
+
+    chip: {
+        margin: 4,
+    },
+    container: {
+        alignItems: 'center',
+    },
+    addButton: {
+        backgroundColor: 'blue',
+        borderRadius: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        marginVertical: 8,
+    },
+    addButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+
+
+
+
     loginContainer: {
         backgroundColor: Colors.light,
         flex: 1,
@@ -422,9 +704,9 @@ const styles = StyleSheet.create({
     },
 
     picker: {
-        borderColor: 'gray',
+        borderColor: "gray",
         borderWidth: 1,
-        color: Colors.gray
+        color: Colors.gray,
     },
 
     inputView: {
@@ -477,7 +759,7 @@ const styles = StyleSheet.create({
         flexGrow: 10,
         padding: 10,
         backgroundColor: Colors.light,
-        marginBottom: 20
+        marginBottom: 20,
         // borderWidth: 2,
         // borderColor: "red"
     },

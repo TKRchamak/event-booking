@@ -20,8 +20,7 @@ export interface IEvent {
     organizer: string; // organizer id
     city: string;
     type: string;
-    latitude: string;
-    longitude: string;
+    location: any;
     image: string;
     poster: string;
     description: string;
@@ -30,6 +29,7 @@ export interface IEvent {
     time_slot?: string[];
     reviews?: IReview[];
     ticket_cat?: ITicketType[];
+    duration: number;
 }
 
 // {

@@ -22,6 +22,7 @@ import RequestOrganizerList from '../Screens/SuperAdmin/RequestOrganizerList';
 import EventList from '../Screens/Organizer/EventList';
 import Profile from '../Screens/SuperAdmin/Profile';
 import AddEvent from '../Screens/Organizer/AddEvent';
+import PickLocationFromMap from '../Screens/Organizer/PickLocationFromMap';
 
 
 
@@ -140,7 +141,7 @@ const RootNavigator = () => {
                 }}
             >
 
-                {/* <Tab.Screen
+                <Tab.Screen
                     name="Home"
                     component={EventList}
                     options={{
@@ -148,7 +149,7 @@ const RootNavigator = () => {
                             <AntDesign name="home" color={color} size={size} />
                         ),
                     }}
-                /> */}
+                />
 
                 {/* <Tab.Screen
                     name="Organizer List"
@@ -247,8 +248,8 @@ const RootNavigator = () => {
     return (
         <>
             <Stack.Navigator screenOptions={screenOptionStyle}>
-                <Stack.Screen name="admin" component={OrganizerTabNavigation} />
-                {/* <Stack.Screen name="organizer-detail" component={OrganizerDetail} /> */}
+                <Stack.Screen name="OrganizerDashboard" component={OrganizerTabNavigation} />
+                <Stack.Screen name="pick-location" component={PickLocationFromMap} />
             </Stack.Navigator>
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="select-city" component={SelectCity} />

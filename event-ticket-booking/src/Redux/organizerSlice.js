@@ -7,12 +7,19 @@ const initialState = {
     currentOrganizer: {},
     status: "idle",
     error: "",
+    currentCreationEventLocation: {},
 };
 
 const organizerSlice = createSlice({
     name: "organizer",
     initialState: initialState,
     reducers: {
+        setCurrentLocation: (state, action) => {
+            if (action.payload) {
+                state.currentCreationEventLocation = action.payload;
+            }
+        },
+
         setAllActiveOrganizerList: (state, action) => {
             if (action.payload) {
                 state.allActiveOrganizerList = action.payload;
@@ -34,6 +41,6 @@ const organizerSlice = createSlice({
     },
 });
 
-export const { setAllActiveOrganizerList, setAllRequestOrganizerList, setCurrentOrganizer } = organizerSlice.actions;
+export const { setCurrentLocation, setAllActiveOrganizerList, setAllRequestOrganizerList, setCurrentOrganizer } = organizerSlice.actions;
 
 export default organizerSlice.reducer;

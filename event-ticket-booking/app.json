@@ -15,12 +15,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAcRfv-2yjc209wtURA7Sb3x6q_LW-bZio"
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAcRfv-2yjc209wtURA7Sb3x6q_LW-bZio"
+        }
       }
     },
     "web": {
@@ -32,6 +42,12 @@
         {
           "photosPermission": "The app accesses your photos to select and upload image.",
           "cameraPermission": "The app accesses your camera to take photo and upload ."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(event_ticket_booking) to use your location."
         }
       ]
     ]
