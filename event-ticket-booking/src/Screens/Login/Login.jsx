@@ -100,7 +100,11 @@ export default function Login(props) {
           navigation.goBack();
         }}
       />
-      <ScrollView style={{ flex: 1, backgroundColor: Colors.light }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false} // Hide the vertical scrollbar
+        showsHorizontalScrollIndicator={false} // Hide the horizontal scrollbar
+        style={{ flex: 1, backgroundColor: Colors.light }}
+      >
         <View style={styles.loginContainer}>
           <Text style={styles.myLogo}>EVENT</Text>
           <View style={styles.inputView}>

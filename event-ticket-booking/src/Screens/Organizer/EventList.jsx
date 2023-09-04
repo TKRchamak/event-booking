@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View, RefreshControl } from 'react-native';
 import HeaderBar from '../../Components/HeaderBar/HeaderBar';
 import { useDispatch, useSelector } from 'react-redux';
 import Colors from '../../utils/Colors';
@@ -15,6 +15,7 @@ import { EvilIcons } from '@expo/vector-icons';
 
 const EventList = ({ navigation }) => {
     const dispatch = useDispatch();
+    const [refreshing, setRefreshing] = useState(false);
     const token = useSelector((state) => state.user.token);
     const user = useSelector((state) => state.user.userData);
     const myEventList = useSelector((state) => state.event.organizersEventList);
@@ -66,6 +67,20 @@ const EventList = ({ navigation }) => {
         }
     }
 
+
+    const fetchData = () => {
+        // Simulate fetching data from an API or other source
+        setTimeout(() => {
+            getThisOrganizerEvents()
+            setRefreshing(false); // Set refreshing to false to stop the loader
+        }, 2000); // Simulate a delay of 2 seconds
+    };
+
+    const handleRefresh = () => {
+        setRefreshing(true); // Set refreshing to true to show the loader
+        fetchData(); // Fetch new data
+    };
+
     useEffect(() => {
         if (token) {
             if (user?.status === "active") {
@@ -79,6 +94,9 @@ const EventList = ({ navigation }) => {
     const eventFlatList = (dataList) => {
         return (
             <FlatList
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+                }
                 data={dataList}
                 keyExtractor={item => item?._id}
                 style={{
@@ -91,7 +109,7 @@ const EventList = ({ navigation }) => {
                 }}
                 renderItem={({ item }) =>
                     <TouchableOpacity
-                        // onPress={() => navigation.navigate("organizer-detail", item)}
+                        onPress={() => navigation.navigate("event-detail", item)}
                         style={{
                             flex: 1,
                             flexDirection: "row",

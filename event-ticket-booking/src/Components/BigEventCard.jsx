@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import Colors from '../utils/Colors';
 
-const BigEventCard = ({ item, index }) => {
+const BigEventCard = ({ item, index, func }) => {
     // console.log(item);
     return (
-        <View style={{
+        <Pressable onPress={func} style={{
             height: 300,
             width: 220,
             alignItems: "flex-end",
@@ -17,7 +17,7 @@ const BigEventCard = ({ item, index }) => {
             <View style={{ position: "absolute", top: 85, left: 0, }}>
                 <Text style={styles.number}>{index + 1}</Text>
             </View>
-        </View>
+        </Pressable>
     );
 };
 

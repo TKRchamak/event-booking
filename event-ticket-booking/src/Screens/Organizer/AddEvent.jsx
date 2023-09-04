@@ -35,12 +35,15 @@ import { Chip } from 'react-native-paper';
 import uuid from 'react-native-uuid';
 import { EvilIcons } from '@expo/vector-icons';
 import { setOrganizerEventList } from "../../Redux/eventSlice";
+import { setCurrentLocation } from "../../Redux/organizerSlice";
 
 const AddEvent = ({ navigation }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.userData);
     const token = useSelector((state) => state.user.token);
     const eventLocation = useSelector((state) => state.organizer.currentCreationEventLocation);
+
+
     const [inputRegUser, setInputRegUser] = useState({});
     const [selectedCity, setSelectedCity] = useState("");
     const [selectedType, setSelectedType] = useState("");
@@ -176,7 +179,7 @@ const AddEvent = ({ navigation }) => {
         const requestData = {
             ...inputRegUser,
             location: eventLocation,
-            timeSlot: timeSlots,
+            time_slot: timeSlots,
             city: selectedCity,
             type: selectedType,
             organizer: user._id,
@@ -196,6 +199,14 @@ const AddEvent = ({ navigation }) => {
             if (data.status === "success") {
                 showDialog("This Event Created Successfully");
                 getThisOrganizerEvents();
+                dispatch(setCurrentLocation({}));
+                setInputRegUser({});
+                setTimeSlots([]);
+                setSelectedCity("");
+                setSelectedType("");
+                setPhoto(null);
+                setPoster(null);
+
                 navigation.navigate("Home");
             } else {
                 throw data;
@@ -207,7 +218,11 @@ const AddEvent = ({ navigation }) => {
     }
 
     return (
-        <ScrollView style={styles.headerContainer}>
+        <ScrollView
+            showsVerticalScrollIndicator={false} // Hide the vertical scrollbar
+            showsHorizontalScrollIndicator={false} // Hide the horizontal scrollbar
+            style={styles.headerContainer}
+        >
             <Portal>
                 <Dialog
                     visible={visible[0]}
@@ -459,15 +474,13 @@ const AddEvent = ({ navigation }) => {
             {/* mid area */}
             <View style={[styles.productsContainer]}>
                 <View style={styles.loginContainer}>
-                    <Text
-                        style={{
-                            color: Colors.themeColorHigh,
-                            fontSize: FontUtils.cfs.header3,
-                            alignSelf: "flex-start",
-                            paddingHorizontal: 20,
-                            paddingBottom: 10,
-                        }}
-                    >
+                    <Text style={{
+                        color: Colors.themeColorHigh,
+                        fontSize: FontUtils.cfs.header3,
+                        alignSelf: "flex-start",
+                        paddingHorizontal: 20,
+                        paddingBottom: 10,
+                    }}>
                         Create Event
                     </Text>
                     {/* <Text
@@ -488,6 +501,7 @@ const AddEvent = ({ navigation }) => {
 
                         <TextInput
                             style={styles.inputFieldStyle}
+                            value={inputRegUser?.name || ""}
                             onChangeText={(text) => handleInputChange(text, "name")}
                             placeholder="Event Name"
                             placeholderTextColor={Colors.gray}
@@ -495,6 +509,7 @@ const AddEvent = ({ navigation }) => {
 
                         <TextInput
                             style={styles.inputFieldStyle}
+                            value={inputRegUser?.title || ""}
                             onChangeText={(text) => handleInputChange(text, "title")}
                             placeholder="Event Title"
                             placeholderTextColor={Colors.gray}
@@ -550,6 +565,7 @@ const AddEvent = ({ navigation }) => {
 
                         <TextInput
                             style={styles.inputFieldStyle}
+                            value={inputRegUser?.duration || ""}
                             onChangeText={(text) => handleInputChange(text, "duration")}
                             placeholder="Event Time Duration in(minute)"
                             keyboardType="numeric"
@@ -558,8 +574,18 @@ const AddEvent = ({ navigation }) => {
 
                         <TextInput
                             style={styles.inputFieldStyle}
+                            value={inputRegUser?.seat_quantity || ""}
                             onChangeText={(text) => handleInputChange(text, "seat_quantity")}
-                            placeholder="Total Ticket Quantity"
+                            placeholder="Total Seat Quantity"
+                            keyboardType="numeric"
+                            placeholderTextColor={Colors.gray}
+                        />
+
+                        <TextInput
+                            style={styles.inputFieldStyle}
+                            value={inputRegUser?.ticket_price || ""}
+                            onChangeText={(text) => handleInputChange(text, "ticket_price")}
+                            placeholder="Ticket Price"
                             keyboardType="numeric"
                             placeholderTextColor={Colors.gray}
                         />
@@ -568,6 +594,7 @@ const AddEvent = ({ navigation }) => {
                             editable
                             multiline
                             numberOfLines={6}
+                            value={inputRegUser?.description || ""}
                             // maxLength={40}
                             style={[styles.inputFieldStyle, { paddingVertical: 0 }]}
                             onChangeText={(text) =>
@@ -581,6 +608,7 @@ const AddEvent = ({ navigation }) => {
                             editable
                             multiline
                             numberOfLines={6}
+                            value={inputRegUser?.general_info || ""}
                             // maxLength={40}
                             style={[styles.inputFieldStyle, { paddingVertical: 0 }]}
                             onChangeText={(text) =>
@@ -635,17 +663,13 @@ const AddEvent = ({ navigation }) => {
                             height={60}
                             marginBottom={10}
                             textColor={Colors.light}
-                            text={
-                                regLoading ? (
-                                    <ActivityIndicator
-                                        size={"large"}
-                                        animating={true}
-                                        color={Colors.themeColorHigh}
-                                    />
-                                ) : (
-                                    "Create Event"
-                                )
-                            }
+                            text={regLoading ? (
+                                <ActivityIndicator
+                                    size={"large"}
+                                    animating={true}
+                                    color={Colors.themeColorHigh}
+                                />)
+                                : ("Create Event")}
                             // disabled={true}
                             func={() => createAnEvent()}
                         />

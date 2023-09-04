@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import CustomInput from '../../Components/CustomInput/CustomInput';
 import { setUserData } from '../../Redux/userSlice';
+import EmptyListScreen from '../../Components/EmptyListScreen';
 
 const SelectCity = (props) => {
     const dispatch = useDispatch();
@@ -175,11 +176,7 @@ const SelectCity = (props) => {
 
                 {
                     (searchQuery !== "" && searchCityList.length === 0) &&
-                    <View style={{ justifyContent: "center", justifyContent: "center" }}>
-                        <Image style={{ height: 100, width: 100, marginLeft: 20 }} source={require("../../../assets/img/searchError.png")}></Image>
-                        <Text style={{ textAlign: "center" }}>we are sorry, we can not</Text>
-                        <Text style={{ textAlign: "center" }}>find the movie :(</Text>
-                    </View>
+                    <EmptyListScreen />
                 }
             </View>
 

@@ -1,39 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-    Text,
-    TextInput,
-    Image,
-    View,
-    StyleSheet,
-    ScrollView,
-    Pressable,
-    TouchableOpacity,
-    FlatList,
-    ActivityIndicator,
-    StatusBar
-    // Modal,
-} from "react-native";
+import React, { useState } from "react";
+import { Text, Image, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Modal from 'react-native-modal';
-import { Picker } from "@react-native-picker/picker";
-import { AntDesign } from "@expo/vector-icons";
 import { Avatar } from "react-native-paper";
 import { Button, Dialog, Portal } from "react-native-paper";
-
-import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Chip } from 'react-native-paper';
-import uuid from 'react-native-uuid';
-import { EvilIcons, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, EvilIcons, MaterialIcons, Entypo } from '@expo/vector-icons';
 import Colors from "../utils/Colors";
 import CustomBtn from "../Components/CustomBtn/CustomBtn";
-import FontUtils from "../utils/FontUtils";
-import { multipleImage, singleImage } from "../Services/PickImage";
-import rootUrl from "../Services/rootUrl";
-import { setOrganizerEventList } from "../Redux/eventSlice";
+import EmptyListScreen from "../Components/EmptyListScreen";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from "@react-native-picker/picker";
 
 const EventDetail = ({ navigation, route }) => {
     const item = route.params || 'No data received';
@@ -43,11 +22,26 @@ const EventDetail = ({ navigation, route }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [visible, setVisible] = useState([false, ""]);
     const [activeTab, setActiveTab] = useState("about_movie");
+    const [selectedTime, setSelectedTime] = useState("");
+
 
     const showDialog = (text) => setVisible([true, text]);
     const hideDialog = () => setVisible([false, ""]);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
+    };
+
+
+    const [selectDate, setSelectDate] = useState(new Date());
+    const nextSevenDays = new Date();
+    nextSevenDays.setDate(nextSevenDays.getDate() + 7);
+
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const handleToTimeChange = (event, selectedDate) => {
+        if (selectedDate) {
+            setSelectDate(selectedDate);
+            setShowDatePicker(false);
+        }
     };
 
     return (
@@ -81,17 +75,78 @@ const EventDetail = ({ navigation, route }) => {
                 onBackButtonPress={() => toggleModal()}
             >
                 <View style={styles.modalContent}>
+                    <View style={{ position: "absolute", top: 16, right: 16 }}>
+                        <AntDesign onPress={toggleModal} name="closecircleo" size={28} color={Colors.dark} />
+                    </View>
+                    <View style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingHorizontal: 5
+                    }}>
+                        <MaterialIcons name="event" size={24} color="black" />
+                        <Text style={{ fontSize: 20 }}>Select Your Date and Session</Text>
+                    </View>
+
+                    {/* <View style={styles.inputView}>
+                        <View>
+                            <MaterialIcons name="date-range" size={24} color="black" />
+                        </View>
+
+                        <View style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 2,
+                            borderWidth: 2,
+                            borderColor: "red",
+                            // fontWeight: "600", // don't work
+                            borderRadius: 16,
+                        }}>
+                            <Picker
+                                placeholderTextColor={Colors.gray}
+                                style={{ width: "100%" }}
+                                selectedValue={selectedTime}
+                                onValueChange={(itemValue, itemIndex) => {
+                                    setSelectedTime(itemValue);
+                                }}
+                            >
+                                <Picker.Item label={"Event Type"} value={""} />
+                                {
+                                        eventTypeList.map(event => <Picker.Item key={event._id} label={event.name} value={event.name} />)
+                                    }
+                            </Picker>
+                        </View>
+                    </View> */}
 
 
-                    <View style={{ width: "100%" }}>
+                    <View style={{ paddingVertical: 10 }}>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectDate}
+                                maximumDate={nextSevenDays} // Restrict selection to today or earlier
+                                minimumDate={selectDate} // Restrict selection to the last 30 days
+                                mode="date"
+                                display="default"
+                                onChange={handleToTimeChange}
+                            />
+                        )}
+                        <TouchableOpacity style={{ width: "50%", marginBottom: 20, marginLeft: 10 }} onPress={() => setShowDatePicker(true)}>
+                            {/* <Text style={{ fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Event End At:</Text> */}
+                            <View style={{ height: 50, width: "100%", borderRadius: 16, borderColor: Colors.gray, borderWidth: 1, flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                <MaterialIcons name="date-range" size={24} color="black" />
+                                <Text style={{ fontSize: 20, fontWeight: 600, marginLeft: 10 }}>{selectDate.toDateString()}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+
+                    <View style={{ width: "100%", marginBottom: 0, marginTop: "auto" }}>
                         <CustomBtn
                             height={60}
                             marginBottom={10}
                             textColor={Colors.light}
-                            text={"Close Modal"}
-                            func={() => {
-
-                            }}
+                            text={"BUY"}
+                            func={() => { }}
                         />
                     </View>
                 </View>
@@ -292,17 +347,15 @@ const EventDetail = ({ navigation, route }) => {
             </View>
 
             {/* tab navigation */}
-            <View
-                style={{
-                    width: "100%",
-                    height: 50,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "row"
-                    // borderWidth: 2,
-                    // borderColor: "red"
-                }}
-            >
+            <View style={{
+                width: "100%",
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+                // borderWidth: 2,
+                // borderColor: "red"
+            }}>
                 <View style={[
                     styles.myTabBtnStyle,
                     activeTab === "about_movie" && { borderColor: Colors.themeColorHigh },
@@ -320,56 +373,38 @@ const EventDetail = ({ navigation, route }) => {
                         {"Reviews"}
                     </Text>
                 </View>
-
-                <View style={[
-                    styles.myTabBtnStyle,
-                    activeTab === "seats" && { borderColor: Colors.themeColorHigh },
-                ]}>
-                    <Text onPress={() => setActiveTab("seats")} style={{ color: Colors.dark, fontSize: 22, fontWeight: "600", paddingLeft: 5 }}>
-                        {"Seats"}
-                    </Text>
-                </View>
             </View>
-            {/* 
-            <View style={[styles.myTabBtnArea]}>
-                <View
-                    style={[
-                        styles.myTabBtnStyle,
-                        activeTab !== "about_organize" && { borderColor: "#ffffff" },
-                    ]}
-                >
-                    <Text
-                        style={{
-                            textAlign: "center",
-                            fontSize: 20,
-                            fontWeight: 600,
-                        }}
-                        onPress={() => setActiveTab("about_organize")}
-                    >
-                        About Organize
-                    </Text>
-                </View>
-
-                {item?.status !== "pending" && (
-                    <View
-                        style={[
-                            styles.myTabBtnStyle,
-                            activeTab === "about_organize" && { borderColor: "#ffffff" },
-                        ]}
-                    >
-                        <Text
-                            onPress={() => setActiveTab("event_list")}
-                            style={{ textAlign: "center", fontSize: 20, fontWeight: 600 }}
-                        >
-                            Event List
-                        </Text>
-                    </View>
-                )}
-            </View> */}
 
             {/* mid area */}
-            <ScrollView style={[styles.productsContainer]}>
+            <ScrollView
+                showsVerticalScrollIndicator={false} // Hide the vertical scrollbar
+                showsHorizontalScrollIndicator={false} // Hide the horizontal scrollbar
+                style={[styles.productsContainer]}
+            >
+                {
+                    activeTab === "about_movie" &&
+                    <View style={{ paddingHorizontal: 15, paddingVertical: 10 }}>
+                        <Text style={{ textAlign: "center", fontSize: 16 }}> {item?.description} </Text>
+                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginVertical: 10 }}>
+                            <Entypo name="info" size={18} color={Colors.neutral} />
+                            <Entypo name="info" size={18} color={Colors.success} />
+                            <Entypo name="info" size={18} color={Colors.error} />
+                        </View>
+                        <Text style={{ textAlign: "center", fontSize: 16 }}> {item?.general_info} </Text>
+                    </View>
+                }
+                {
+                    activeTab === "reviews" &&
+                    ((item?.reviews.length > 0) ?
+                        (item?.reviews).map(review => {
+                            <View style={{ paddingHorizontal: 15, paddingVertical: 10 }}>
+                                <Text style={{ textAlign: "center", fontSize: 16 }}> {item?.description} </Text>
+                            </View>
+                        })
+                        :
+                        <EmptyListScreen />)
 
+                }
             </ScrollView>
 
 
@@ -392,7 +427,7 @@ const EventDetail = ({ navigation, route }) => {
                             color2={Colors.themeColorLow}
                             text={"Buy Ticket"}
                             marginBottom={0}
-                        // func={() => adminApprovalDecision("active")}
+                            func={toggleModal}
                         />
                     </View>
                 </View>
@@ -446,9 +481,9 @@ const styles = StyleSheet.create({
     },
 
     picker: {
-        borderColor: "gray",
+        borderColor: Colors.gray,
         borderWidth: 1,
-        color: Colors.gray,
+        color: Colors.dark,
     },
 
     inputView: {

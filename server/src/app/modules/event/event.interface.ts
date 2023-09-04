@@ -29,6 +29,7 @@ export interface IEvent {
     time_slot?: any[];
     reviews?: IReview[];
     ticket_cat?: any[];
+    ticket_price: number;
     duration: number;
 }
 

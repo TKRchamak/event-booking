@@ -5,6 +5,7 @@ import { addEventToDB, addReviewToEventToDB, getEventFromDB, getEventListByIdLis
 export const addEvent = async (req: Request | any, res: Response, next: NextFunction) => {
     try {
         console.log("=============its working=================");
+        console.log(req.body);
         const { userId, role } = req.authUser
         if (role !== "organizer") {
             return res.status(401).json({
@@ -87,7 +88,7 @@ export const getEvent = async (req: Request, res: Response, next: NextFunction) 
 export const getOrganizerEventList = async (req: Request | any, res: Response, next: NextFunction) => {
     try {
         const { userId, role } = req.authUser;
-        console.log(role, userId);
+        // console.log(role, userId);
         const eventList = await getEventListByIdList(userId);
         return res.status(200).json({
             status: "success",

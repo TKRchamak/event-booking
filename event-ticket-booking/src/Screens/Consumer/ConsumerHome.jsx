@@ -221,8 +221,6 @@ const ConsumerHome = ({ navigation }) => {
                 </View>
             </View>
 
-
-
             <TouchableOpacity onPress={() => navigation.navigate("Search")} style={{ paddingHorizontal: 10 }}>
                 <View style={{ padding: 10, height: 60, flexDirection: "row" }}>
                     <View style={styles.letIconBox}>
@@ -241,6 +239,8 @@ const ConsumerHome = ({ navigation }) => {
             </TouchableOpacity>
 
             <ScrollView
+                showsVerticalScrollIndicator={false} // Hide the vertical scrollbar
+                showsHorizontalScrollIndicator={false} // Hide the horizontal scrollbar
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
                 }
@@ -253,11 +253,11 @@ const ConsumerHome = ({ navigation }) => {
                     keyExtractor={item => item._id}
                     style={{ width: "100%" }}
                     renderItem={({ item, index }) =>
-                        <BigEventCard item={item} index={index} />
+                        <BigEventCard item={item} index={index} func={() => { navigation.navigate("event-detail", item) }} />
                     }
                 />
 
-                <Text style={{ fontWeight: 800, fontSize: 16, marginLeft: 10 }}>{("Top Rated").toUpperCase()}</Text>
+                {/* <Text style={{ fontWeight: 800, fontSize: 16, marginLeft: 10 }}>{("Top Rated").toUpperCase()}</Text>
                 <FlatList
                     data={eventList}
                     showsHorizontalScrollIndicator={false}
@@ -269,7 +269,7 @@ const ConsumerHome = ({ navigation }) => {
                             <Image source={{ uri: item?.image }} style={{ width: 120, height: 180, borderRadius: 14 }} />
                         </TouchableOpacity>
                     }
-                />
+                /> */}
 
                 <Text style={{ fontWeight: 800, fontSize: 16, marginLeft: 10 }}>{("Top Rated").toUpperCase()}</Text>
                 <FlatList

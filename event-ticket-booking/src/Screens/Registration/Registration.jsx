@@ -122,7 +122,11 @@ const Registration = (props) => {
 
             <HeaderBar navigation={navigation} name={"Continue With Your Email"} func={() => { navigation.goBack() }} />
 
-            <ScrollView style={{ flex: 1, backgroundColor: Colors.light }}>
+            <ScrollView
+                showsVerticalScrollIndicator={false} // Hide the vertical scrollbar
+                showsHorizontalScrollIndicator={false} // Hide the horizontal scrollbar
+                style={{ flex: 1, backgroundColor: Colors.light }}
+            >
                 <View style={styles.loginContainer}>
                     <Text style={{ color: Colors.themeColorHigh, fontSize: FontUtils.cfs.header3, alignSelf: "flex-start", paddingHorizontal: 20, paddingTop: 15, }}>Create Account</Text>
                     <Text style={{ color: Colors.gray, fontSize: FontUtils.cfs.normal, alignSelf: "flex-start", paddingHorizontal: 20, paddingTop: 5, paddingBottom: 20 }}>

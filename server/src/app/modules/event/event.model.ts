@@ -14,8 +14,9 @@ const eventSchema = new Schema<IEvent>({
     description: { type: String, required: true, unique: false },
     seat_quantity: { type: String, required: true, unique: false },
     time_slot: { type: Array, required: true, unique: false },
-    reviews: { type: Array, required: true, unique: false },
-    ticket_cat: { type: Array, required: true, unique: false },
+    reviews: { type: Array, required: false, unique: false },
+    ticket_cat: { type: Array, required: false, unique: false },
+    ticket_price: { type: Number, required: true, unique: false },
     duration: { type: Number, required: true, unique: false },
 
     // ticket_cat: [{ type: Schema.Types.ObjectId, ref: 'Ticket' }],
