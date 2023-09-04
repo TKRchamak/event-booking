@@ -14,7 +14,7 @@ import axios from 'axios';
 import Dashboard from '../Screens/SuperAdmin/Dashboard';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation } from 'react-native-paper';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import OrganizerList from '../Screens/SuperAdmin/OrganizerList';
 import AdminProfile from '../Screens/SuperAdmin/AdminProfile';
 import OrganizerDetail from '../Screens/SuperAdmin/OrganizerDetail';
@@ -23,6 +23,9 @@ import EventList from '../Screens/Organizer/EventList';
 import Profile from '../Screens/SuperAdmin/Profile';
 import AddEvent from '../Screens/Organizer/AddEvent';
 import PickLocationFromMap from '../Screens/Organizer/PickLocationFromMap';
+import ConsumerHome from '../Screens/Consumer/ConsumerHome';
+import SearchScreen from '../Screens/Consumer/SearchScreen';
+import EventDetail from '../Screens/EventDetail';
 
 
 
@@ -123,7 +126,6 @@ const RootNavigator = () => {
         )
     }
 
-
     const OrganizerTabNavigation = () => {
         return (
             <Tab.Navigator
@@ -152,8 +154,8 @@ const RootNavigator = () => {
                 />
 
                 {/* <Tab.Screen
-                    name="Organizer List"
-                    component={OrganizerList}
+                    name="Event List"
+                    component={EventList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign name="profile" color={color} size={size} />
@@ -184,7 +186,6 @@ const RootNavigator = () => {
         )
     }
 
-
     const UserTabNavigation = () => {
         return (
             <Tab.Navigator
@@ -196,15 +197,14 @@ const RootNavigator = () => {
                         height: 60,
                         backgroundColor: 'white', // Background color of the bottom navigation bar
                     },
-                    activeTintColor: Colors.themeColorLow, // Color for the selected tab
+                    activeTintColor: Colors.themeColorHigh, // Color for the selected tab
                     inactiveTintColor: Colors.gray, // Color for inactive tabs
                     headerShown: false
                 }}
             >
-
                 <Tab.Screen
                     name="Home"
-                    component={Dashboard}
+                    component={ConsumerHome}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign name="home" color={color} size={size} />
@@ -213,21 +213,31 @@ const RootNavigator = () => {
                 />
 
                 <Tab.Screen
-                    name="Organizer List"
+                    name="Watch List"
                     component={OrganizerList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <AntDesign name="profile" color={color} size={size} />
+                            <MaterialIcons name="preview" color={color} size={size} />
                         ),
                     }}
                 />
 
                 <Tab.Screen
-                    name="Request List"
+                    name="Search"
+                    component={SearchScreen}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="search1" size={size} color={color} />
+                        ),
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Ticket List"
                     component={RequestOrganizerList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
-                            <AntDesign name="profile" color={color} size={size} />
+                            <MaterialCommunityIcons name="ticket-percent-outline" size={size} color={color} />
                         ),
                     }}
                 />
@@ -248,9 +258,14 @@ const RootNavigator = () => {
     return (
         <>
             <Stack.Navigator screenOptions={screenOptionStyle}>
+                <Stack.Screen name="consumer" component={UserTabNavigation} />
+                <Stack.Screen name="event-detail" component={EventDetail} />
+            </Stack.Navigator>
+
+            {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="OrganizerDashboard" component={OrganizerTabNavigation} />
                 <Stack.Screen name="pick-location" component={PickLocationFromMap} />
-            </Stack.Navigator>
+            </Stack.Navigator> */}
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="select-city" component={SelectCity} />
             </Stack.Navigator> */}
@@ -280,13 +295,13 @@ const RootNavigator = () => {
                                     user?.role === "organizer"
                                         ?
                                         <Stack.Navigator screenOptions={screenOptionStyle}>
-                                            <Stack.Screen name="admin" component={OrganizerTabNavigation} />
-                                            <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+                                            <Stack.Screen name="OrganizerDashboard" component={OrganizerTabNavigation} />
+                                            <Stack.Screen name="pick-location" component={PickLocationFromMap} />
                                         </Stack.Navigator>
                                         :
                                         <Stack.Navigator screenOptions={screenOptionStyle}>
-                                            <Stack.Screen name="admin" component={UserTabNavigation} />
-                                            <Stack.Screen name="organizer-detail" component={OrganizerDetail} />
+                                            <Stack.Screen name="consumer" component={UserTabNavigation} />
+                                            <Stack.Screen name="event-detail" component={EventDetail} />
                                         </Stack.Navigator>
                             }
                         </>

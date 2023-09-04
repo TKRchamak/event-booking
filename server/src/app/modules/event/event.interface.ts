@@ -26,9 +26,9 @@ export interface IEvent {
     description: string;
     seat_quantity: string;
     general_info?: string;
-    time_slot?: string[];
+    time_slot?: any[];
     reviews?: IReview[];
-    ticket_cat?: ITicketType[];
+    ticket_cat?: any[];
     duration: number;
 }
 

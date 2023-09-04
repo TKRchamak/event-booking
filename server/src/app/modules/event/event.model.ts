@@ -6,7 +6,7 @@ const eventSchema = new Schema<IEvent>({
     title: { type: String, required: true, unique: true },
     organizer: { type: String, required: true, unique: false },
     city: { type: String, required: true, unique: false },
-    type: { type: String, required: true, unique: true },
+    type: { type: String, required: true, unique: false },
     location: { type: Object, required: true, unique: false },
     image: { type: String, required: false, unique: false },
     poster: { type: String, required: false, unique: false },

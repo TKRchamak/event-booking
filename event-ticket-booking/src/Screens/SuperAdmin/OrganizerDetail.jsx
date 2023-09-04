@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Colors from "../../utils/Colors";
 import HeaderBar from "../../Components/HeaderBar/HeaderBar";
 import { Avatar, Portal, Button, Dialog, } from "react-native-paper";
 import CustomBtn from "../../Components/CustomBtn/CustomBtn";
 import { LinearGradient } from "expo-linear-gradient";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons, EvilIcons } from '@expo/vector-icons';
 import axios from "axios";
 import rootUrl from "../../Services/rootUrl";
 import { setAllActiveOrganizerList, setAllRequestOrganizerList } from "../../Redux/organizerSlice";
@@ -29,7 +29,7 @@ const OrganizerDetail = ({ navigation, route }) => {
         return (
             <FlatList
                 data={dataList}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item?._id}
                 style={{
                     flex: 1,
                     width: "100%",
@@ -63,11 +63,11 @@ const OrganizerDetail = ({ navigation, route }) => {
                             // borderColor: "red"
                         }}>
                             {
-                                (!item?.organization_logo)
+                                (!item?.image)
                                     ? <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                                         <Avatar.Icon size={90} icon="camera" color={Colors.themeColorHigh} style={{ backgroundColor: Colors.light }} />
                                     </View>
-                                    : <Image source={{ uri: item?.organization_logo }} style={{ width: "100%", height: "100%" }} />
+                                    : <Image source={{ uri: item?.image }} style={{ width: "100%", height: "100%" }} />
                             }
                         </View>
                         <View style={{
@@ -87,8 +87,9 @@ const OrganizerDetail = ({ navigation, route }) => {
                                 // borderWidth: 2,
                                 // borderColor: "red"
                             }}>
-                                <Text style={{ color: "#000000", fontSize: 22, fontWeight: 600 }}>{item?.organization_name}</Text>
+                                <Text style={{ color: "#000000", fontSize: 22, fontWeight: 600 }}>{item?.name}</Text>
                             </View>
+
                             <View style={{
                                 flex: 1,
                                 width: '100%',
@@ -102,11 +103,12 @@ const OrganizerDetail = ({ navigation, route }) => {
                                     alignItems: "center",
                                     marginBottom: 2
                                 }}>
-                                    <MaterialIcons name="event" size={20} color={Colors.gray} />
+                                    <MaterialIcons name="category" size={20} color={Colors.gray} />
                                     <Text style={{ color: Colors.gray, fontSize: 16, paddingLeft: 5 }}>
-                                        {item?.event_list.length > 1 ? `${item?.event_list.length} events` : `${item?.event_list.length} event`}
+                                        {item?.type}
                                     </Text>
                                 </View>
+
                                 <View style={{
                                     flexDirection: "row",
                                     alignItems: "center",
@@ -117,6 +119,18 @@ const OrganizerDetail = ({ navigation, route }) => {
                                         2023
                                     </Text>
                                 </View>
+
+                                <View style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginBottom: 2
+                                }}>
+                                    {/* <MaterialIcons name="location" size={20} color={Colors.gray} /> */}
+                                    <EvilIcons name="location" size={20} color={Colors.gray} />
+                                    <Text style={{ color: Colors.gray, fontSize: 16, paddingLeft: 5 }}>
+                                        {item?.city}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -124,6 +138,7 @@ const OrganizerDetail = ({ navigation, route }) => {
             />
         )
     }
+
 
     const getOrganizerList = async () => {
         const headers = {
@@ -368,8 +383,12 @@ const OrganizerDetail = ({ navigation, route }) => {
                 {
                     activeTab === "about_organize" ?
                         <Text>{item.description}</Text>
-                        // : myEventList?.length > 0 && eventFlatList(myEventList)
-                        : <Text>Event List</Text>
+                        : myEventList?.length > 0 ? eventFlatList(myEventList)
+                            : <View style={{ height: "100%", width: "100%", justifyContent: "center", justifyContent: "center" }}>
+                                <Image style={{ height: 80, width: 80, marginLeft: 150 }} source={require("../../../assets/img/searchError.png")}></Image>
+                                <Text style={{ textAlign: "center" }}>we are sorry, we can not</Text>
+                                <Text style={{ textAlign: "center" }}>find the anything :(</Text>
+                            </View>
                 }
             </View>
 

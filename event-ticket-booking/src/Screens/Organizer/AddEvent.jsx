@@ -184,7 +184,7 @@ const AddEvent = ({ navigation }) => {
             poster: poster,
         };
 
-        console.log(requestData);
+        // console.log(requestData);
 
         try {
             const { data } = await axios.post(
@@ -455,8 +455,6 @@ const AddEvent = ({ navigation }) => {
                     }}
                 />
             </View>
-
-            {/* <SelectTimeSlot /> */}
 
             {/* mid area */}
             <View style={[styles.productsContainer]}>
