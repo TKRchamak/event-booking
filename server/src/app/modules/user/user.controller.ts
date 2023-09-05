@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { addTicketInDB, createUserToDB, getUserByEmailFromDB, getUserByIdFromDB, updateUserByIdFromDB } from "./user.service";
 import { encryptPassword, checkPassword } from "../../utils/password";
 import { getAuthToken } from "../../utils/authentication";
+import { createTicketToDB, getUserTicketFromDB } from "../ticket/ticket.service";
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -97,18 +98,25 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
     })
 }
 
-// export const buyTicket = async (req: Request | any, res: Response, next: NextFunction) => {
-//     // const { id } = req.params;
+export const buyTicket = async (req: Request | any, res: Response, next: NextFunction) => {
+    const { userId, role } = req.authUser;
+    const ticket = await createTicketToDB(req.body);
+    return res.status(200).json({
+        status: 'success',
+        data: ticket
+    })
+}
 
-//     const { userId, role } = req.authUser;
-//     // console.log(req.authUser, req.body.ticket_id);
-//     const allUsers = await addTicketInDB(userId, req.body.ticket_id);
-//     // console.log("user controller", allUsers);
-//     return res.status(200).json({
-//         status: 'success',
-//         data: allUsers
-//     })
-// }
+export const getTicketList = async (req: Request | any, res: Response, next: NextFunction) => {
+    const { userId, role } = req.authUser;
+    // console.log(req.authUser, req.body.ticket_id);
+    const myAllTicket = await getUserTicketFromDB(userId);
+    // console.log("user controller", allUsers);
+    return res.status(200).json({
+        status: 'success',
+        data: myAllTicket
+    })
+}
 
 
 // export const getUsers = async (req: Request, res: Response, next: NextFunction) => {

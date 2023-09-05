@@ -1,11 +1,12 @@
 export interface ITicket {
     _id: string;
-    description: string;
-    discount: string;
-    price: string;
-    user_id: string;
+    user_id: object;
     event_id: string;
+    price: number;
     ticket_date: string;
     time_slot: string;
-    // status: "active" | "done";
+    quantity: number;
+    status: "active" | "done";
+    discount?: number;
+    description?: string;
 }

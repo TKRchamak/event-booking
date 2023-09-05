@@ -8,6 +8,7 @@ const configData = {
     STORAGE_NAME: process.env.STORAGE_NAME as string,
     STORAGE_API_KEY: process.env.STORAGE_API_KEY as string,
     STORAGE_API_SECRET: process.env.STORAGE_API_SECRET as string,
+    STRIP_SECRET_KEY: process.env.STRIP_SECRET_KEY as string,
 
     // CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     // CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,

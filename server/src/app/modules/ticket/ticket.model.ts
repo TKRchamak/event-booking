@@ -3,16 +3,24 @@ import { ITicket } from "./ticket.interface";
 
 // creating schema using interface
 const ticketSchema = new Schema<ITicket>({
-    description: { type: String, required: true, unique: true },
-    discount: { type: String, required: false },
-    price: { type: String, required: true, unique: true },
+    price: { type: Number, required: true },
     user_id: { type: String, required: true },
     event_id: { type: String, required: true },
     ticket_date: { type: String, required: true },
     time_slot: { type: String, required: true },
-    // status: { type: String, enum: ["active", "done"], required: true }
+    quantity: { type: Number, required: true },
+    status: { type: String, default: "active", enum: ["active", "done"], required: true },
+    discount: { type: Number, required: false },
+    description: { type: String, required: false },
+}, {
+    timestamps: true, // This option will automatically create 'created_at' and 'updated_at' fields
 });
 
 const Ticket = model("Ticket", ticketSchema);
 
 export default Ticket;
+
+// user_id: {
+//     type: Schema.Types.ObjectId,
+//     ref: "User"
+// },

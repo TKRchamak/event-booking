@@ -8,12 +8,14 @@ import * as SplashScreen from "expo-splash-screen";
 import { Provider } from "react-redux";
 import store from "./src/Redux";
 import { PaperProvider } from 'react-native-paper';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 export default function App() {
   const statusBarHeight = StatusBar.currentHeight;
   const [fontsLoaded] = useFonts({
     "Anton-Regular": require("./assets/fonts/Anton-Regular.ttf"),
     "BlackOpsOne-Regular": require("./assets/fonts/BlackOpsOne-Regular.ttf"),
+    "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -33,11 +35,13 @@ export default function App() {
   return (
     <Provider store={store}>
       <PaperProvider>
-        <NavigationContainer onLayout={onLayoutRootView}>
-          <SafeAreaView style={[styles.container, { marginTop: statusBarHeight }]}>
-            <RootNavigator />
-          </SafeAreaView>
-        </NavigationContainer>
+        <StripeProvider publishableKey="pk_test_51NmtsdJeDgOnT3c8r5hUl16XyJ953fFZguctCQq8BJUmzav84zPBNO5iDIeWuafwCBz7OsKYC5WSpVaQBeAZ4nps00ObVrSCWv">
+          <NavigationContainer onLayout={onLayoutRootView}>
+            <SafeAreaView style={[styles.container, { marginTop: statusBarHeight }]}>
+              <RootNavigator />
+            </SafeAreaView>
+          </NavigationContainer>
+        </StripeProvider>
       </PaperProvider>
     </Provider>
   );

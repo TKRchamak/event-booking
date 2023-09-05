@@ -257,10 +257,10 @@ const RootNavigator = () => {
 
     return (
         <>
-            {/* <Stack.Navigator screenOptions={screenOptionStyle}>
-                <Stack.Screen name="consumer" component={UserTabNavigation} />
+            <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="event-detail" component={EventDetail} />
-            </Stack.Navigator> */}
+                <Stack.Screen name="consumer" component={UserTabNavigation} />
+            </Stack.Navigator>
 
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="OrganizerDashboard" component={OrganizerTabNavigation} />
@@ -269,7 +269,7 @@ const RootNavigator = () => {
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>
                 <Stack.Screen name="select-city" component={SelectCity} />
             </Stack.Navigator> */}
-            {
+            {/* {
                 token === "" ?
                     <Stack.Navigator screenOptions={screenOptionStyle}>
                         <Stack.Screen name="landing" component={LandingPage} />
@@ -306,7 +306,7 @@ const RootNavigator = () => {
                                         </Stack.Navigator>
                             }
                         </>
-            }
+            } */}
         </>
     );
 };

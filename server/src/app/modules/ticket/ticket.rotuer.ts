@@ -5,6 +5,5 @@ const router = express.Router();
 
 router.post("/create-ticket", authentication, createTicket);
 router.get("/get-users-ticket", authentication, getTicketListByToken);
-// router.delete("/login", loginUser);
 
 export default router;
