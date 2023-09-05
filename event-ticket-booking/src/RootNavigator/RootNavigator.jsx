@@ -26,6 +26,7 @@ import PickLocationFromMap from '../Screens/Organizer/PickLocationFromMap';
 import ConsumerHome from '../Screens/Consumer/ConsumerHome';
 import SearchScreen from '../Screens/Consumer/SearchScreen';
 import EventDetail from '../Screens/EventDetail';
+import TicketDetail from '../Screens/TicketDetail';
 
 
 
@@ -258,8 +259,9 @@ const RootNavigator = () => {
     return (
         <>
             <Stack.Navigator screenOptions={screenOptionStyle}>
-                <Stack.Screen name="event-detail" component={EventDetail} />
                 <Stack.Screen name="consumer" component={UserTabNavigation} />
+                <Stack.Screen name="event-detail" component={EventDetail} />
+                <Stack.Screen name="ticket-detail" component={TicketDetail} />
             </Stack.Navigator>
 
             {/* <Stack.Navigator screenOptions={screenOptionStyle}>

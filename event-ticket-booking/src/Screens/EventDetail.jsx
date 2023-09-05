@@ -18,106 +18,45 @@ import { presentPaymentSheet, useStripe } from "@stripe/stripe-react-native";
 import rootUrl from "../Services/rootUrl";
 
 const EventDetail = ({ navigation, route }) => {
-
-    const { initPaymentSheet, presentPaymentSheet, confirmPayment, createPaymentMethod } = useStripe();
-
-    const createPaymentIntent = async () => {
-        let amount = Math.floor(ticketQuantity * item.ticket_price * 100);
-        const { data } = await axios.post(
-            `${rootUrl}/api/v1/payment/intents`,
-            {
-                // amount: "33055" // it can not accept 330.55 || so that mean the 33055 === 330.55
-                amount: amount
-            }
-        );
-        return data;
-    }
-
-
-    const onCreateTicket = async () => {
-        let amount = Math.floor(ticketQuantity * item.ticket_price * 100);
-        const { data } = await axios.post(
-            `${rootUrl}/api/v1/payment/intents`,
-            {
-                // amount: "33055" // it can not accept 330.55 || so that mean the 33055 === 330.55
-                amount: amount
-            }
-        );
-        return data;
-    }
-
-    const onCheckout = async () => {
-        const intentResponse = await createPaymentIntent();
-        if (intentResponse.error) {
-            Alert.alert("Something went wrong");
-            return;
-        }
-
-        const initResponse = await initPaymentSheet({
-            merchantDisplayName: "Event_Booking_Merchant.dev",
-            paymentIntentClientSecret: intentResponse.paymentIntent
-        })
-        if (initResponse.error) {
-            console.log(initResponse.error);
-            Alert.alert("Something went wrong");
-            return;
-        }
-        console.log("initResponse", initResponse);
-
-        const paymentResponse = await presentPaymentSheet();
-        if (paymentResponse.error) {
-            Alert.alert(
-                `Error code : ${paymentResponse.error.code}`,
-                paymentResponse.error.message
-            )
-            return;
-        }
-
-        // onCreateOrder(); // this is my function to append order in my database;
-    }
-
-
-
-
-    // const item = route.params || 'No data received';
-    const item = {
-        __v: 0,
-        _id: "64f5d322dac3fdef92b4493f",
-        city: "Chittagong",
-        description: "Bxnxnddnjddjdjd",
-        duration: 120,
-        general_info: "Shjssbdjdje. Eieie ieie",
-        image: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831888/emsrfzm5e0tcryvsnhux.jpg",
-        location: {
-            coords: {
-                accuracy: 100,
-                altitude: -43.19999694824219,
-                altitudeAccuracy: 100,
-                heading: 0,
-                latitude: 23.7935717,
-                longitude: 90.4201978,
-                speed: 0
-            },
-            mocked: false,
-            timestamp: 1693831966821
-        },
-        name: "Jurassic world ",
-        organizer: "64f2ef50ecbec3a424fe0d4f",
-        poster: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831882/mbjnebklombop04ppdcr.jpg",
-        reviews: [],
-        seat_quantity: "50",
-        ticket_cat: [],
-        ticket_price: 400,
-        time_slot: [
-            {
-                from: "7:00 PM",
-                id: "436f3bba-e157-4757-a08d-e4c2c629e0d0",
-                to: "9:00 PM"
-            }
-        ],
-        title: "jurassicWorld",
-        type: "Movie"
-    }
+    const item = route.params || 'No data received';
+    // const item = {
+    //     __v: 0,
+    //     _id: "64f5d322dac3fdef92b4493f",
+    //     city: "Chittagong",
+    //     description: "Bxnxnddnjddjdjd",
+    //     duration: 120,
+    //     general_info: "Shjssbdjdje. Eieie ieie",
+    //     image: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831888/emsrfzm5e0tcryvsnhux.jpg",
+    //     location: {
+    //         coords: {
+    //             accuracy: 100,
+    //             altitude: -43.19999694824219,
+    //             altitudeAccuracy: 100,
+    //             heading: 0,
+    //             latitude: 23.7935717,
+    //             longitude: 90.4201978,
+    //             speed: 0
+    //         },
+    //         mocked: false,
+    //         timestamp: 1693831966821
+    //     },
+    //     name: "Jurassic world ",
+    //     organizer: "64f2ef50ecbec3a424fe0d4f",
+    //     poster: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831882/mbjnebklombop04ppdcr.jpg",
+    //     reviews: [],
+    //     seat_quantity: "50",
+    //     ticket_cat: [],
+    //     ticket_price: 400,
+    //     time_slot: [
+    //         {
+    //             from: "7:00 PM",
+    //             id: "436f3bba-e157-4757-a08d-e4c2c629e0d0",
+    //             to: "9:00 PM"
+    //         }
+    //     ],
+    //     title: "jurassicWorld",
+    //     type: "Movie"
+    // }
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.userData);
@@ -148,6 +87,85 @@ const EventDetail = ({ navigation, route }) => {
         }
     };
 
+
+    const { initPaymentSheet, presentPaymentSheet, confirmPayment, createPaymentMethod } = useStripe();
+
+    const createPaymentIntent = async () => {
+        let amount = Math.floor(ticketQuantity * item.ticket_price * 100);
+        const { data } = await axios.post(
+            `${rootUrl}/api/v1/payment/intents`,
+            {
+                // amount: "33055" // it can not accept 330.55 || so that mean the 33055 === 330.55
+                amount: amount
+            }
+        );
+        return data;
+    }
+
+    const onCreateTicket = async () => {
+        const headers = {
+            'X-Auth-Token': token
+        };
+        const reqData = {
+            description: "",
+            discount: 0,
+            price: item.ticket_price,
+            user_id: user._id,
+            event_id: item._id,
+            ticket_date: selectDate,
+            time_slot: selectedTime,
+            quantity: ticketQuantity
+        }
+        console.log(reqData);
+        // let amount = Math.floor(ticketQuantity * item.ticket_price * 100);
+        const { data } = await axios.post(`${rootUrl}/api/v1/user/buy-ticket`, reqData, headers);
+
+        if (data.data?._id) {
+            setModalVisible(false);
+            showDialog("Ticket Booking Done.");
+        }
+        return data;
+    }
+
+    const onCheckout = async () => {
+        const intentResponse = await createPaymentIntent();
+        if (intentResponse.error) {
+            Alert.alert("Something went wrong");
+            return;
+        }
+
+        const initResponse = await initPaymentSheet({
+            merchantDisplayName: "Event_Booking_Merchant.dev",
+            paymentIntentClientSecret: intentResponse.paymentIntent
+        })
+        if (initResponse.error) {
+            console.log(initResponse.error);
+            Alert.alert("Something went wrong");
+            return;
+        }
+        console.log("initResponse", initResponse);
+
+        const paymentResponse = await presentPaymentSheet();
+        if (paymentResponse.error) {
+            Alert.alert(
+                `Error code : ${paymentResponse.error.code}`,
+                paymentResponse.error.message
+            )
+            return;
+        }
+        let ticketRes = await onCreateTicket();
+        console.log(ticketRes);
+
+
+        // if (paymentResponse.error) {
+        //     Alert.alert(
+        //         `Error code : ${paymentResponse.error.code}`,
+        //         paymentResponse.error.message
+        //     )
+        //     return;
+        // }
+    }
+
     return (
         <View style={styles.headerContainer}>
             <Portal>
@@ -167,7 +185,7 @@ const EventDetail = ({ navigation, route }) => {
             </Portal>
 
             <Modal
-                isVisible={true}
+                isVisible={isModalVisible}
                 animationIn="slideInUp" // Use slideInUp for bottom to top animation
                 animationOut="slideOutDown" // Use slideOutDown for closing animation
                 backdropOpacity={0.5}

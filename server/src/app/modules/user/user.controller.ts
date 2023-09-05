@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { addTicketInDB, createUserToDB, getUserByEmailFromDB, getUserByIdFromDB, updateUserByIdFromDB } from "./user.service";
 import { encryptPassword, checkPassword } from "../../utils/password";
 import { getAuthToken } from "../../utils/authentication";
-import { createTicketToDB, getUserTicketFromDB } from "../ticket/ticket.service";
+import { createTicketToDB, getSingleTicket, getUserTicketFromDB } from "../ticket/ticket.service";
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -99,7 +99,7 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
 }
 
 export const buyTicket = async (req: Request | any, res: Response, next: NextFunction) => {
-    const { userId, role } = req.authUser;
+    // const { userId, role } = req.authUser;
     const ticket = await createTicketToDB(req.body);
     return res.status(200).json({
         status: 'success',
@@ -108,14 +108,28 @@ export const buyTicket = async (req: Request | any, res: Response, next: NextFun
 }
 
 export const getTicketList = async (req: Request | any, res: Response, next: NextFunction) => {
-    const { userId, role } = req.authUser;
-    // console.log(req.authUser, req.body.ticket_id);
-    const myAllTicket = await getUserTicketFromDB(userId);
-    // console.log("user controller", allUsers);
+    // const { userId, role } = req.authUser;
+    const myAllTicket = await getUserTicketFromDB();
     return res.status(200).json({
         status: 'success',
         data: myAllTicket
     })
+}
+
+export const getTicket = async (req: Request | any, res: Response, next: NextFunction) => {
+    // const { userId, role } = req.authUser;
+    try {
+        const myAllTicket = await getSingleTicket("64f73efb15293ba657395819");
+        return res.status(200).json({
+            status: 'success',
+            data: myAllTicket
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            error: error
+        })
+    }
 }
 
 
