@@ -7,9 +7,9 @@ router.post("/register-user", registerUser);
 router.post("/login", loginUser);
 router.get("/detail", authentication, getUserByToken);
 router.put("/update", authentication, updateUserByToken);
-router.post("/buy-ticket", buyTicket);
-router.get("/get-all-ticket", getTicketList);
-router.get("/get-single-ticket", getTicket);
+router.post("/buy-ticket", authentication, buyTicket);
+router.get("/get-all-ticket", authentication, getTicketList);
+router.get("/get-single-ticket", authentication, getTicket);
 // router.get("/", getUsers);
 
 export default router;

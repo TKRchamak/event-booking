@@ -99,27 +99,51 @@ export const updateUserByToken = async (req: Request | any, res: Response, next:
 }
 
 export const buyTicket = async (req: Request | any, res: Response, next: NextFunction) => {
-    // const { userId, role } = req.authUser;
-    const ticket = await createTicketToDB(req.body);
-    return res.status(200).json({
-        status: 'success',
-        data: ticket
-    })
-}
+    try {
+        const { userId, role } = req.authUser;
+        if (!userId) {
+            throw new Error("User not Found")
+        }
 
-export const getTicketList = async (req: Request | any, res: Response, next: NextFunction) => {
-    // const { userId, role } = req.authUser;
-    const myAllTicket = await getUserTicketFromDB();
-    return res.status(200).json({
-        status: 'success',
-        data: myAllTicket
-    })
+        const ticket = await createTicketToDB(req.body);
+        return res.status(200).json({
+            status: 'success',
+            data: ticket
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            error: error
+        })
+    }
 }
 
 export const getTicket = async (req: Request | any, res: Response, next: NextFunction) => {
-    // const { userId, role } = req.authUser;
     try {
-        const myAllTicket = await getSingleTicket("64f73efb15293ba657395819");
+        const { userId, role } = req.authUser;
+        if (!userId) {
+            throw new Error("User not Found")
+        }
+        const myAllTicket = await getSingleTicket(req.body.ticketId);
+        return res.status(200).json({
+            status: 'success',
+            data: myAllTicket
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            error: error
+        })
+    }
+}
+
+export const getTicketList = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        if (!userId) {
+            throw new Error("User not Found")
+        }
+        const myAllTicket = await getUserTicketFromDB(userId);
         return res.status(200).json({
             status: 'success',
             data: myAllTicket

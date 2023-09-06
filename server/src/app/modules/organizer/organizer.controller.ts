@@ -2,6 +2,7 @@ import { checkPassword, encryptPassword } from './../../utils/password';
 import { NextFunction, Response, Request } from "express";
 import { createOrganizerToDB, getOrganizerByEmailFromDB, getOrganizerFromDB, removeOrganizerFromDB, updateOrganizerFromDB, updateOrganizerStateFromDB } from "./organizer.service";
 import { getAuthToken } from '../../utils/authentication';
+import { createTicketToDB, updateTicketFromDB } from '../ticket/ticket.service';
 
 // add Organizer
 export const registerOrganizer = async (req: Request, res: Response, next: NextFunction) => {
@@ -182,6 +183,26 @@ export const removeOrganizer = async (req: Request, res: Response, next: NextFun
         return res.status(500).json({
             status: "error",
             error
+        })
+    }
+}
+
+export const updateTicketStatusToDone = async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+        const { userId, role } = req.authUser;
+        if (!userId) {
+            throw new Error("User not Found")
+        }
+
+        const ticket = await updateTicketFromDB(req.body.ticket_id);
+        return res.status(200).json({
+            status: 'success',
+            data: ticket
+        })
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            error: error
         })
     }
 }

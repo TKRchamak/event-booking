@@ -27,6 +27,8 @@ import ConsumerHome from '../Screens/Consumer/ConsumerHome';
 import SearchScreen from '../Screens/Consumer/SearchScreen';
 import EventDetail from '../Screens/EventDetail';
 import TicketDetail from '../Screens/TicketDetail';
+import WatchList from '../Screens/Consumer/WatchList';
+import TicketList from '../Screens/Consumer/TicketList';
 
 
 
@@ -215,7 +217,7 @@ const RootNavigator = () => {
 
                 <Tab.Screen
                     name="Watch List"
-                    component={OrganizerList}
+                    component={WatchList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialIcons name="preview" color={color} size={size} />
@@ -235,7 +237,7 @@ const RootNavigator = () => {
 
                 <Tab.Screen
                     name="Ticket List"
-                    component={RequestOrganizerList}
+                    component={TicketList}
                     options={{
                         tabBarIcon: ({ color, size }) => (
                             <MaterialCommunityIcons name="ticket-percent-outline" size={size} color={color} />

@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import HeaderBar from '../../Components/HeaderBar/HeaderBar';
+import Colors from '../../utils/Colors';
 
-const FavoriteList = () => {
+const WatchList = () => {
     return (
         <View style={styles.headerContainer}>
             <HeaderBar backButton={true} navigation={navigation} name={"Watch List"}></HeaderBar>
@@ -27,4 +31,5 @@ const styles = StyleSheet.create({
 
 });
 
-export default FavoriteList;
+
+export default WatchList;

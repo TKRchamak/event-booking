@@ -1,5 +1,5 @@
 import express from "express";
-import { registerOrganizer, removeOrganizer, updateOrganizerData, loginOrganizer, getAllOrganizer, getOrganizerByIdToken, updateOrganizerState } from "./organizer.controller";
+import { registerOrganizer, removeOrganizer, updateOrganizerData, loginOrganizer, getAllOrganizer, getOrganizerByIdToken, updateOrganizerState, updateTicketStatusToDone } from "./organizer.controller";
 import authentication from "../../middlewares/authentication.middleware";
 const router = express.Router();
 
@@ -17,5 +17,6 @@ router.put("/update", authentication, updateOrganizerData); //role organizer
 
 router.get("/all", authentication, getAllOrganizer); // role admin
 router.put("/admin-approval", authentication, updateOrganizerState); // role admin
+router.put("/ticket-update", authentication, updateTicketStatusToDone); // role admin
 
 export default router;

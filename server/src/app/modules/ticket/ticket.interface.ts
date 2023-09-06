@@ -1,7 +1,9 @@
+import { Schema } from "mongoose";
+
 export interface ITicket {
-    _id: string;
-    user_id: string;
-    event_id: string;
+    _id: Schema.Types.ObjectId;
+    user: Schema.Types.ObjectId;
+    event: Schema.Types.ObjectId;
     price: number;
     ticket_date: Date;
     time_slot: object;

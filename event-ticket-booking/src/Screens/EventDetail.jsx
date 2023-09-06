@@ -19,45 +19,6 @@ import rootUrl from "../Services/rootUrl";
 
 const EventDetail = ({ navigation, route }) => {
     const item = route.params || 'No data received';
-    // const item = {
-    //     __v: 0,
-    //     _id: "64f5d322dac3fdef92b4493f",
-    //     city: "Chittagong",
-    //     description: "Bxnxnddnjddjdjd",
-    //     duration: 120,
-    //     general_info: "Shjssbdjdje. Eieie ieie",
-    //     image: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831888/emsrfzm5e0tcryvsnhux.jpg",
-    //     location: {
-    //         coords: {
-    //             accuracy: 100,
-    //             altitude: -43.19999694824219,
-    //             altitudeAccuracy: 100,
-    //             heading: 0,
-    //             latitude: 23.7935717,
-    //             longitude: 90.4201978,
-    //             speed: 0
-    //         },
-    //         mocked: false,
-    //         timestamp: 1693831966821
-    //     },
-    //     name: "Jurassic world ",
-    //     organizer: "64f2ef50ecbec3a424fe0d4f",
-    //     poster: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831882/mbjnebklombop04ppdcr.jpg",
-    //     reviews: [],
-    //     seat_quantity: "50",
-    //     ticket_cat: [],
-    //     ticket_price: 400,
-    //     time_slot: [
-    //         {
-    //             from: "7:00 PM",
-    //             id: "436f3bba-e157-4757-a08d-e4c2c629e0d0",
-    //             to: "9:00 PM"
-    //         }
-    //     ],
-    //     title: "jurassicWorld",
-    //     type: "Movie"
-    // }
-
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.userData);
     const token = useSelector((state) => state.user.token);
@@ -165,6 +126,7 @@ const EventDetail = ({ navigation, route }) => {
         //     return;
         // }
     }
+
 
     return (
         <View style={styles.headerContainer}>
@@ -391,7 +353,8 @@ const EventDetail = ({ navigation, route }) => {
                             }
                             disabled={ticketQuantity > 0 ? false : true}
                             text={(ticketQuantity > 0) ? `GET IN - ${(ticketQuantity * item.ticket_price).toFixed(2)}` : "SELECT A SESSION"}
-                            func={() => { onCheckout() }}
+                            // func={() => { onCheckout() }}
+                            func={() => { onCreateTicket() }}
                         />
                     </View>
 

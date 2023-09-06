@@ -3,7 +3,8 @@ import HeaderBar from '../Components/HeaderBar/HeaderBar';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../utils/Colors';
 
-const TicketDetail = ({ navigation }) => {
+const TicketDetail = ({ navigation, route }) => {
+    const item = route.params || 'No data received';
     return (
         <View style={styles.headerContainer}>
             <HeaderBar navigation={navigation} name={""}></HeaderBar>

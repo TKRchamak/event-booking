@@ -68,7 +68,6 @@ const ConsumerHome = ({ navigation }) => {
         }
     }
 
-
     const handleRefresh = () => {
         setRefreshing(true); // Set refreshing to true to show the loader
         fetchData(); // Fetch new data
@@ -81,7 +80,6 @@ const ConsumerHome = ({ navigation }) => {
             setRefreshing(false); // Set refreshing to false to stop the loader
         }, 2000); // Simulate a delay of 2 seconds
     };
-
 
     useEffect(() => {
         if (token) {

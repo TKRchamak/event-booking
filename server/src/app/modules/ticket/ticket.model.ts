@@ -4,8 +4,8 @@ import { ITicket } from "./ticket.interface";
 // creating schema using interface
 const ticketSchema = new Schema<ITicket>({
     price: { type: Number, required: true },
-    user_id: { type: String, required: true },
-    event_id: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    event: { type: Schema.Types.ObjectId, ref: "Event", required: true },
     ticket_date: { type: Date, required: true },
     time_slot: { type: Object, required: true },
     quantity: { type: Number, required: true },
@@ -19,8 +19,3 @@ const ticketSchema = new Schema<ITicket>({
 const Ticket = model("Ticket", ticketSchema);
 
 export default Ticket;
-
-// user_id: {
-//     type: Schema.Types.ObjectId,
-//     ref: "User"
-// },
