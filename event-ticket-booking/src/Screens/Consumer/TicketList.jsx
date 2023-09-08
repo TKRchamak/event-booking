@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import HeaderBar from '../../Components/HeaderBar/HeaderBar';
 import Colors from '../../utils/Colors';
@@ -10,17 +10,25 @@ const TicketList = ({ navigation }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.userData);
     const token = useSelector((state) => state.user.token);
+    console.log(token);
+
     const [refreshing, setRefreshing] = useState(false);
     const [ticketList, setTicketList] = useState([]);
 
     const getTicketList = async () => {
-        const headers = {
-            'X-Auth-Token': token
-        };
-        const { data } = await axios.get(`${rootUrl}/api/v1/user/get-all-ticket`, headers);
+        try {
+            const headers = {
+                'X-Auth-Token': token
+            };
+            const { data } = await axios.get(`${rootUrl}/api/v1/user/get-all-ticket`, {
+                headers
+            });
 
-        console.log(data);
-        setTicketList(data.data);
+            console.log(data);
+            setTicketList(data.data);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const handleRefresh = () => {
@@ -52,7 +60,78 @@ const TicketList = ({ navigation }) => {
                 }
 
                 renderItem={({ item }) =>
-                    <Text>{item?._id}</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("ticket-detail", item)}
+                        style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginBottom: 15
+                        }}
+                    >
+                        <View style={{
+                            height: 145,
+                            width: "65%",
+                            borderRadius: 10,
+                            padding: 10,
+                            backgroundColor: "#F5ECF9"
+                        }}>
+                            <Text style={{
+                                color: Colors.gray,
+                                fontSize: 18,
+                                fontFamily: "Poppins-Regular",
+                            }}>Event Name</Text>
+                            <Text style={{
+                                color: Colors.themeColorHigh,
+                                fontSize: 20,
+                                fontFamily: "Poppins-Bold",
+                                marginBottom: 2,
+                                fontWeight: "600"
+                            }}>{item?.event?.name}</Text>
+
+
+                            <Text style={{
+                                color: Colors.gray,
+                                fontSize: 18,
+                                fontFamily: "Poppins-Regular",
+                            }}>Date</Text>
+                            <Text style={{
+                                color: Colors.dark,
+                                fontSize: 20,
+                                fontFamily: "Poppins-Bold",
+                            }}>{item?.time_slot?.from}</Text>
+                        </View>
+
+
+                        <View style={{
+                            height: 130,
+                            width: 0,
+                            borderWidth: 1,
+                            borderStyle: "dashed",
+                            borderColor: "#F5ECF9"
+                        }}></View>
+
+
+                        <View style={{
+                            height: 145,
+                            width: "35%",
+                            borderRadius: 10,
+                            padding: 10,
+                            backgroundColor: "#F5ECF9"
+                        }}>
+                            <Text style={{
+                                color: Colors.gray,
+                                fontSize: 18,
+                                fontFamily: "Poppins-Regular",
+                            }}>Total Seats</Text>
+                            <Text style={{
+                                color: Colors.dark,
+                                fontSize: 20,
+                                fontFamily: "Poppins-Bold",
+                            }}>{item?.quantity < 10 ? `0${item?.quantity}` : `${item?.quantity}`}</Text>
+                        </View>
+                    </TouchableOpacity>
                     // <TouchableOpacity
                     //     onPress={() => navigation.navigate("event-detail", item)}
                     //     style={{

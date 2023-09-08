@@ -16,6 +16,7 @@ export default function App() {
     "Anton-Regular": require("./assets/fonts/Anton-Regular.ttf"),
     "BlackOpsOne-Regular": require("./assets/fonts/BlackOpsOne-Regular.ttf"),
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {

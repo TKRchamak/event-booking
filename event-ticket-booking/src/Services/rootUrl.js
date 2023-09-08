@@ -1,5 +1,5 @@
-// export default "http://192.168.1.104:7000"; // home
-export default "http://192.168.68.74:7000"; //project code
+export default "http://192.168.1.106:7000"; // home
+// export default "http://192.168.68.74:7000"; //project code
 
 
 // const adminApprovalDecision = async (decision) => {

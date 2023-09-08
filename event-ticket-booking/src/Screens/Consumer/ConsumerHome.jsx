@@ -70,11 +70,6 @@ const ConsumerHome = ({ navigation }) => {
 
     const handleRefresh = () => {
         setRefreshing(true); // Set refreshing to true to show the loader
-        fetchData(); // Fetch new data
-    };
-
-    const fetchData = () => {
-        // Simulate fetching data from an API or other source
         setTimeout(() => {
             getAllEventList();// Add new data to the existing data
             setRefreshing(false); // Set refreshing to false to stop the loader
