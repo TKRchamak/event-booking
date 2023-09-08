@@ -214,21 +214,11 @@ const ConsumerHome = ({ navigation }) => {
                 </View>
             </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Search")} style={{ paddingHorizontal: 10 }}>
-                <View style={{ padding: 10, height: 60, flexDirection: "row" }}>
-                    <View style={styles.letIconBox}>
-                        {/* <TouchableOpacity onPress={() => setSearchText("")}> */}
-                        <AntDesign name="search1" size={24} color={Colors.gray} />
-                        {/* </TouchableOpacity> */}
-                    </View>
-                    <View
-                        style={styles.input}
-                        value={""}
-
-                    // onChangeText={text => setSearchText(text)}
-                    />
-
+            <TouchableOpacity onPress={() => navigation.navigate("Search")} style={{ paddingHorizontal: 20, paddingVertical: 10, height: 60, flexDirection: "row" }}>
+                <View style={styles.letIconBox}>
+                    <AntDesign name="search1" size={24} color={Colors.gray} />
                 </View>
+                <View style={styles.input} />
             </TouchableOpacity>
 
             <ScrollView
@@ -238,7 +228,6 @@ const ConsumerHome = ({ navigation }) => {
                     <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
                 }
             >
-                {/* <Text style={{ fontWeight: 800, fontSize: 20, marginLeft: 10 }}>{(`Top 10 in ${user?.selected_city}`).toUpperCase()}</Text> */}
                 <FlatList
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
@@ -249,20 +238,6 @@ const ConsumerHome = ({ navigation }) => {
                         <BigEventCard item={item} index={index} func={() => { navigation.navigate("event-detail", item) }} />
                     }
                 />
-
-                {/* <Text style={{ fontWeight: 800, fontSize: 16, marginLeft: 10 }}>{("Top Rated").toUpperCase()}</Text>
-                <FlatList
-                    data={eventList}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}
-                    keyExtractor={item => item._id}
-                    style={{ width: "100%", marginBottom: 10, paddingLeft: 10 }}
-                    renderItem={({ item, index }) =>
-                        <TouchableOpacity style={{ padding: 4 }} onPress={() => { navigation.navigate("event-detail", item) }}>
-                            <Image source={{ uri: item?.image }} style={{ width: 120, height: 180, borderRadius: 14 }} />
-                        </TouchableOpacity>
-                    }
-                /> */}
 
                 <Text style={{ fontWeight: 800, fontSize: 16, marginLeft: 10 }}>{("Top Rated").toUpperCase()}</Text>
                 <FlatList
@@ -291,7 +266,6 @@ const ConsumerHome = ({ navigation }) => {
                         </TouchableOpacity>
                     }
                 />
-
             </ScrollView>
         </View >
     );
@@ -337,68 +311,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 20,
-    },
-
-    bodyContainer: {
-        backgroundColor: '#E5E5E5',
-        height: '100%',
-    },
-
-    productImage: {
-        height: 60,
-        width: 60,
-        marginHorizontal: 20,
-    },
-    productsContainer: {
-        flex: 1,
-        flexGrow: 10,
-        // alignItems: "center",
-        padding: 10,
-        backgroundColor: '#E5E5E5',
-    },
-    productCard: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 7,
-        marginBottom: 10,
-    },
-    productContent: {
-        flex: 1,
-        flexGrow: 3,
-        padding: 10,
-        borderLeftColor: '#E5E5E5',
-        borderLeftWidth: 2,
-    },
-
-    yellowBtn: {
-        padding: 10,
-        width: "100%",
-        borderWidth: 2,
-        alignItems: "center",
-        justifyContent: "center",
-        borderColor: '#F6EC33',
-        backgroundColor: '#F6EC33',
-    },
-
-    myTabBtnStyle: {
-        color: Colors.dark,
-        fontSize: 30,
-        width: 120,
-        fontWeight: 600,
-        borderBottomWidth: 6,
-        borderColor: Colors.themeColorHigh,
-        marginHorizontal: 10
-    },
-    myTabBtnArea: {
-        height: 60,
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: Colors.light,
-    },
+    }
 });
 
 
