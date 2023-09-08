@@ -5,63 +5,7 @@ import Colors from '../utils/Colors';
 import QRCode from 'react-native-qrcode-svg';
 
 const TicketDetail = ({ navigation, route }) => {
-    // const item = route.params || 'No data received';
-    const item = {
-        price: 400,
-        user: "64f0d67dfca07593473d7105",
-        event: {
-            _id: "64f5d322dac3fdef92b4493f",
-            name: "Jurassic world ",
-            title: "jurassicWorld",
-            organizer: "64f2ef50ecbec3a424fe0d4f",
-            city: "Chittagong",
-            type: "Movie",
-            location: {
-                timestamp: 1693831966821,
-                mocked: false,
-                coords: {
-                    altitude: -43.19999694824219,
-                    heading: 0,
-                    altitudeAccuracy: 100,
-                    latitude: 23.7935717,
-                    speed: 0,
-                    longitude: 90.4201978,
-                    accuracy: 100
-                }
-            },
-            image: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831888/emsrfzm5e0tcryvsnhux.jpg",
-            poster: "https://res.cloudinary.com/dlqrqkxn4/image/upload/v1693831882/mbjnebklombop04ppdcr.jpg",
-            general_info: "Shjssbdjdje. Eieie ieie",
-            description: "Bxnxnddnjddjdjd",
-            seat_quantity: "50",
-            time_slot: [
-                {
-                    id: "436f3bba-e157-4757-a08d-e4c2c629e0d0",
-                    from: "7:00 PM",
-                    to: "9:00 PM"
-                }
-            ],
-            reviews: [],
-            ticket_cat: [],
-            ticket_price: 400,
-            duration: 120,
-            __v: 0
-        },
-        ticket_date: "2023-09-09T14:22:33.644Z",
-        time_slot: {
-            from: "7:00 PM",
-            id: "436f3bba-e157-4757-a08d-e4c2c629e0d0",
-            to: "9:00 PM"
-        },
-        quantity: 3,
-        status: "active",
-        discount: 0,
-        description: "",
-        _id: "64fab92900b6d0872105cdb0",
-        createdAt: "2023-09-08T06:03:21.354Z",
-        updatedAt: "2023-09-08T06:03:21.354Z",
-        __v: 0
-    }
+    const item = route.params || 'No data received';
     return (
         <View style={styles.headerContainer}>
             <HeaderBar navigation={navigation} name={""}></HeaderBar>

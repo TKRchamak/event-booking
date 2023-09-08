@@ -80,7 +80,7 @@ const ConsumerHome = ({ navigation }) => {
         if (token) {
             getAllEventList();
         }
-        else loginFunc();
+        // else loginFunc();
     }, [])
 
 
