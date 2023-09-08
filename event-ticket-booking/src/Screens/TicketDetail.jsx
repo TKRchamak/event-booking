@@ -1,6 +1,6 @@
 import React from 'react';
 import HeaderBar from '../Components/HeaderBar/HeaderBar';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../utils/Colors';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -11,76 +11,90 @@ const TicketDetail = ({ navigation, route }) => {
             <HeaderBar navigation={navigation} name={""}></HeaderBar>
 
             <ScrollView style={styles.productsContainer}>
-                <View style={{
-                    width: "100%",
-                    // height: 420,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    // borderWidth: 2,
-                    // borderColor: "blue",
-                    // borderRadius: 10,
-                    overflow: "hidden"
-                }}>
-                    <View style={{
-                        height: 240,
+                <View
+                    style={{
                         width: "100%",
-                        overflow: "hidden",
-                        borderTopLeftRadius: 30,
-                        borderTopRightRadius: 30
-                    }}>
-                        <Image style={{ height: "100%", width: "100%" }} source={{ uri: item?.event?.image }}></Image>
-                        <View style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden"
+                    }}
+                >
+                    <View
+                        style={{
+                            height: 240,
                             width: "100%",
-                            backgroundColor: "#00000080",
-                            padding: 15,
-                            flexDirection: "row"
-                        }}>
-                            <View style={{
+                            overflow: "hidden",
+                            borderTopLeftRadius: 30,
+                            borderTopRightRadius: 30
+                        }}
+                    >
+                        <Image style={{ height: "100%", width: "100%" }} source={{ uri: item?.event?.image }}></Image>
+                        <View
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
                                 height: "100%",
-                                width: "60%",
-                            }}>
-                                <Text style={{
-                                    color: Colors.light,
-                                    fontSize: 24,
-                                    fontFamily: "Poppins-Bold",
-                                    marginBottom: 2,
-                                    fontWeight: "600",
-                                    marginBottom: 8,
-                                }}>{item?.event?.name}</Text>
+                                width: "100%",
+                                backgroundColor: "#00000080",
+                                padding: 15,
+                                flexDirection: "row"
+                            }}
+                        >
+                            <View
+                                style={{
+                                    height: "100%",
+                                    width: "60%",
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: Colors.light,
+                                        fontSize: 24,
+                                        fontFamily: "Poppins-Bold",
+                                        marginBottom: 2,
+                                        fontWeight: "600",
+                                        marginBottom: 8,
+                                    }}
+                                >{item?.event?.name}</Text>
 
 
-                                <Text style={{
-                                    color: Colors.light,
-                                    fontSize: 14,
-                                    fontFamily: "Poppins-Regular",
-                                }}>location</Text>
+                                <Text
+                                    style={{
+                                        color: Colors.light,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins-Regular",
+                                    }}
+                                >location</Text>
 
-                                <Text style={{
-                                    color: Colors.light,
-                                    fontSize: 14,
-                                    fontFamily: "Poppins-Regular",
-                                    marginBottom: 8,
-                                }}>Event Address</Text>
+                                <Text
+                                    style={{
+                                        color: Colors.light,
+                                        fontSize: 14,
+                                        fontFamily: "Poppins-Regular",
+                                        marginBottom: 8,
+                                    }}
+                                >Event Address</Text>
 
-                                <Text style={{
-                                    color: Colors.light,
-                                    fontSize: 18,
-                                    fontFamily: "Poppins-Bold",
-                                    marginBottom: 0,
-                                    fontWeight: "600"
-                                }}>{item?.event?.city}</Text>
+                                <Text
+                                    style={{
+                                        color: Colors.light,
+                                        fontSize: 18,
+                                        fontFamily: "Poppins-Bold",
+                                        marginBottom: 0,
+                                        fontWeight: "600"
+                                    }}
+                                >{item?.event?.city}</Text>
 
-                                <Text style={{
-                                    color: Colors.light,
-                                    fontSize: 24,
-                                    fontFamily: "Poppins-Bold",
-                                    marginBottom: 0,
-                                    fontWeight: "600"
-                                }}>TK {item?.price * item?.quantity}</Text>
+                                <Text
+                                    style={{
+                                        color: Colors.light,
+                                        fontSize: 24,
+                                        fontFamily: "Poppins-Bold",
+                                        marginBottom: 0,
+                                        fontWeight: "600"
+                                    }}
+                                >TK {item?.price * item?.quantity}</Text>
                             </View>
 
 
@@ -120,19 +134,21 @@ const TicketDetail = ({ navigation, route }) => {
                         </View>
                     </View>
 
-                    <View style={{
-                        height: 220,
-                        width: "100%",
-                        overflow: "hidden",
-                        borderBottomLeftRadius: 30,
-                        borderBottomRightRadius: 30,
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        borderColor: Colors.gray,
-                        borderStyle: "dashed",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}>
+                    <View
+                        style={{
+                            height: 220,
+                            width: "100%",
+                            overflow: "hidden",
+                            borderBottomLeftRadius: 30,
+                            borderBottomRightRadius: 30,
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderColor: Colors.gray,
+                            borderStyle: "dashed",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
                         <QRCode
                             value={`${item?._id}`} // Your data to be encoded in the QR code
                             size={180}   // Size of the QR code

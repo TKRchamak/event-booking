@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, TouchableOpacity, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import HeaderBar from '../../Components/HeaderBar/HeaderBar';
 import Colors from '../../utils/Colors';
@@ -10,7 +10,6 @@ const TicketList = ({ navigation }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.userData);
     const token = useSelector((state) => state.user.token);
-    console.log(token);
 
     const [refreshing, setRefreshing] = useState(false);
     const [ticketList, setTicketList] = useState([]);
@@ -24,7 +23,6 @@ const TicketList = ({ navigation }) => {
                 headers
             });
 
-            console.log(data);
             setTicketList(data.data);
         } catch (error) {
             console.log(error);

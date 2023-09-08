@@ -64,33 +64,45 @@ const EventDetail = ({ navigation, route }) => {
     }
 
     const onCreateTicket = async () => {
-        const headers = {
-            'X-Auth-Token': token
-        };
-        const reqData = {
-            description: "",
-            discount: 0,
-            price: item.ticket_price,
-            user_id: user._id,
-            event_id: item._id,
-            ticket_date: selectDate,
-            time_slot: selectedTime,
-            quantity: ticketQuantity
-        }
-        console.log(reqData);
-        // let amount = Math.floor(ticketQuantity * item.ticket_price * 100);
-        const { data } = await axios.post(`${rootUrl}/api/v1/user/buy-ticket`, reqData, headers);
+        try {
+            const headers = {
+                'X-Auth-Token': token
+            };
+            const reqData = {
+                description: "",
+                discount: 0,
+                price: item.ticket_price,
+                user: user._id,
+                event: item._id,
+                ticket_date: selectDate,
+                time_slot: selectedTime,
+                quantity: ticketQuantity
+            }
 
-        if (data.data?._id) {
+            const { data } = await axios.post(`${rootUrl}/api/v1/user/buy-ticket`, reqData, {
+                headers
+            });
+
+            console.log("response data", data);
+
+            if (data?.status === "success") {
+                setModalVisible(false);
+                showDialog("Ticket Booking Done.");
+                navigation.navigate("ticket-detail", data.data);
+            } else {
+                throw data;
+            }
+        } catch (error) {
             setModalVisible(false);
-            showDialog("Ticket Booking Done.");
+            showDialog("Sorry Not Possible at this moment");
         }
-        return data;
     }
 
     const onCheckout = async () => {
+        // try {
         const intentResponse = await createPaymentIntent();
         if (intentResponse.error) {
+            setModalVisible(false);
             Alert.alert("Something went wrong");
             return;
         }
@@ -99,12 +111,14 @@ const EventDetail = ({ navigation, route }) => {
             merchantDisplayName: "Event_Booking_Merchant.dev",
             paymentIntentClientSecret: intentResponse.paymentIntent
         })
-        if (initResponse.error) {
-            console.log(initResponse.error);
-            Alert.alert("Something went wrong");
-            return;
-        }
-        console.log("initResponse", initResponse);
+
+        // if (initResponse.error) {
+        //     console.log(initResponse.error);
+        //     setModalVisible(false);
+        //     Alert.alert("Something went wrong");
+        //     return;
+        // }
+        // console.log("initResponse", initResponse);
 
         const paymentResponse = await presentPaymentSheet();
         if (paymentResponse.error) {
@@ -114,16 +128,10 @@ const EventDetail = ({ navigation, route }) => {
             )
             return;
         }
-        let ticketRes = await onCreateTicket();
-        console.log(ticketRes);
+        onCreateTicket();
 
-
-        // if (paymentResponse.error) {
-        //     Alert.alert(
-        //         `Error code : ${paymentResponse.error.code}`,
-        //         paymentResponse.error.message
-        //     )
-        //     return;
+        // } catch (error) {
+        //     showDialog("Something went wrong");
         // }
     }
 
@@ -353,8 +361,7 @@ const EventDetail = ({ navigation, route }) => {
                             }
                             disabled={ticketQuantity > 0 ? false : true}
                             text={(ticketQuantity > 0) ? `GET IN - ${(ticketQuantity * item.ticket_price).toFixed(2)}` : "SELECT A SESSION"}
-                            // func={() => { onCheckout() }}
-                            func={() => { onCreateTicket() }}
+                            func={() => { onCheckout() }}
                         />
                     </View>
 
@@ -618,29 +625,29 @@ const EventDetail = ({ navigation, route }) => {
 
 
             {/* bottom button */}
-            {/* {
-                user?.role === "user" && */}
-            <View style={{
-                marginTop: "auto",
-                marginBottom: 0,
-                width: "100%",
-                flexDirection: "row",
-            }}>
-                <View style={{ width: "100%" }}>
-                    <CustomBtn
-                        height={60}
-                        width={"100%"}
-                        radius={0}
-                        textColor={Colors.light}
-                        color1={Colors.themeColorHigh}
-                        color2={Colors.themeColorLow}
-                        text={"Buy Ticket"}
-                        marginBottom={0}
-                        func={toggleModal}
-                    />
+            {
+                user?.role === "user" &&
+                <View style={{
+                    marginTop: "auto",
+                    marginBottom: 0,
+                    width: "100%",
+                    flexDirection: "row",
+                }}>
+                    <View style={{ width: "100%" }}>
+                        <CustomBtn
+                            height={60}
+                            width={"100%"}
+                            radius={0}
+                            textColor={Colors.light}
+                            color1={Colors.themeColorHigh}
+                            color2={Colors.themeColorLow}
+                            text={"Buy Ticket"}
+                            marginBottom={0}
+                            func={toggleModal}
+                        />
+                    </View>
                 </View>
-            </View>
-            {/* } */}
+            }
         </View >
     );
 };
